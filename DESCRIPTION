@@ -15,7 +15,7 @@ Description: Draw a complete 'ggplot2' graphic (data reshaping, mappings,
     geometry, labels, theme, palette, legend, facets) with a single short
     call, and compose plots with the '+' operator through the 'kggplot' S3
     class. Plot types, themes and palettes live in extensible registries.
-License: MIT + file LICENSE
+License: AGPL (>= 3)
 URL: https://github.com/kbosirany/kggplot,
     https://kbosirany.github.io/kggplot/
 BugReports: https://github.com/kbosirany/kggplot/issues
