@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-*.Rcheck/
-*.tar.gz
-.DS_Store
-.Renviron
+docs
+public
+inst/doc

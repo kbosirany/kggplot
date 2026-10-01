@@ -22,8 +22,8 @@ test_that("kggplot(p, data) and kgg_add() add a layer", {
   p <- kggplot(obs, "t", "v", color = "Observed")
   expect_length(kggplot(p, sim, color = "Simulated")$layers, 2)
   expect_length(kgg_add(p, sim, color = "Simulated")$layers, 2)
-  expect_s3_class(render(kgg_add(p, sim, color = "Simulated", type = "line"))$plot,
-                  "ggplot")
+  q <- kgg_add(p, sim, color = "Simulated", type = "line")
+  expect_s3_class(render(q)$plot, "ggplot")
 })
 
 test_that("kgg_add() inherits mappings and reuses the data", {
@@ -89,8 +89,11 @@ test_that("facets accept one variable, two variables or a formula", {
 })
 
 test_that("legend can be hidden or moved", {
-  g <- function(l) as_ggplot(kggplot(iris, "Sepal.Length", "Sepal.Width",
-                                     color = "Species", legend = l))
+  g <- function(l) {
+    as_ggplot(kggplot(
+      iris, "Sepal.Length", "Sepal.Width", color = "Species", legend = l
+    ))
+  }
   expect_equal(g(FALSE)$theme$legend.position, "none")
   expect_equal(g("top")$theme$legend.position, "top")
   expect_s3_class(render(kggplot(iris, "Sepal.Length", "Sepal.Width",

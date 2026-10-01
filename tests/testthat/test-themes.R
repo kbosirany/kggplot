@@ -70,16 +70,22 @@ test_that("custom themes, palettes and types can be registered", {
   expect_true("hollow" %in% kgg_types())
   r <- render(kggplot(iris, "Sepal.Length", "Sepal.Width", color = "Species",
                       theme = "tt", type = "hollow"))
-  expect_equal(unique(r$built$data[[1]]$colour), c("#111111", "#222222", "#333333"))
+  expect_equal(
+    unique(r$built$data[[1]]$colour), c("#111111", "#222222", "#333333")
+  )
   expect_equal(r$built$data[[1]]$shape[1], 1)
 })
 
 test_that("get_color_palette works as before", {
   expect_equal(
-    get_color_palette(c("A", "B", "C"), main_colors = c("red", "green", "blue")),
+    get_color_palette(
+      c("A", "B", "C"), main_colors = c("red", "green", "blue")
+    ),
     c(A = "red", B = "green", C = "blue")
   )
-  expect_equal(names(get_color_palette(c("a", "b"), theme = "inrae")), c("a", "b"))
+  expect_equal(
+    names(get_color_palette(c("a", "b"), theme = "inrae")), c("a", "b")
+  )
   expect_error(get_color_palette("a"), "theme")
   expect_length(get_color_palette(1:10, main_colors = c("red", "blue")), 10)
 })

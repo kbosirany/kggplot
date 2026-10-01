@@ -103,7 +103,10 @@ resolve_theme <- function(theme = NULL, base_size = NULL) {
   if (inherits(theme, "theme")) return(list(theme = theme, palette = NULL))
   if (is.function(theme)) return(list(theme = build(theme), palette = NULL))
   if (!is.character(theme) || length(theme) != 1L) {
-    stop("`theme` must be a name, a function or a ggplot2 theme.", call. = FALSE)
+    stop(
+      "`theme` must be a name, a function or a ggplot2 theme.",
+      call. = FALSE
+    )
   }
 
   entry <- .kgg$themes[[theme]]
@@ -130,10 +133,13 @@ resolve_palette <- function(palette) {
   palette <- palette %||% getOption("kggplot.palette")
   if (is.null(palette) || is.function(palette)) return(palette)
   if (!is.character(palette)) {
-    stop("`palette` must be colours, a palette name or a function.", call. = FALSE)
+    stop(
+      "`palette` must be colours, a palette name or a function.",
+      call. = FALSE
+    )
   }
-  if (length(palette) == 1L && is.null(names(palette)) &&
-      !is.null(.kgg$palettes[[palette]])) {
+  is_name <- length(palette) == 1L && is.null(names(palette))
+  if (is_name && !is.null(.kgg$palettes[[palette]])) {
     return(.kgg$palettes[[palette]])
   }
   palette
@@ -144,9 +150,11 @@ palette_values <- function(pal, levels) {
   n <- length(levels)
   if (is.function(pal)) return(stats::setNames(pal(n), levels))
   if (!is.null(names(pal))) return(pal)
-  cols <- if (n <= length(pal)) pal[seq_len(n)] else {
+  if (n <= length(pal)) {
+    cols <- pal[seq_len(n)]
+  } else {
     if (n > 100L) message("Can't generate palette for more than 100 colors")
-    grDevices::colorRampPalette(pal)(n)
+    cols <- grDevices::colorRampPalette(pal)(n)
   }
   stats::setNames(cols, levels)
 }

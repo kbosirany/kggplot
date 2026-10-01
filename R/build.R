@@ -50,43 +50,47 @@ add_color_scales <- function(p, res, pal) {
   if (is.null(pal)) return(p)
   for (a in c("colour", "fill")) {
     vals <- Filter(Negate(is.null), lapply(res, function(r) r$data[[a]]))
-    if (!length(vals)) next
-    if (all(vapply(vals, is.numeric, logical(1)))) {
-      cols <- if (is.function(pal)) pal(7L) else unname(pal)
-      p <- p + if (a == "colour") {
-        ggplot2::scale_colour_gradientn(colours = cols)
-      } else {
-        ggplot2::scale_fill_gradientn(colours = cols)
-      }
-      next
-    }
-    lv <- unique(unlist(lapply(
-      vals, function(v) if (is.factor(v)) levels(v) else unique(as.character(v))
-    )))
-    values <- palette_values(pal, lv)
-    p <- p + if (a == "colour") {
-      ggplot2::scale_colour_manual(values = values)
-    } else {
-      ggplot2::scale_fill_manual(values = values)
-    }
+    if (length(vals)) p <- p + color_scale(a, vals, pal)
   }
   p
 }
 
+color_scale <- function(aesthetic, vals, pal) {
+  if (all(vapply(vals, is.numeric, logical(1)))) {
+    cols <- if (is.function(pal)) pal(7L) else unname(pal)
+    return(switch(
+      aesthetic,
+      colour = ggplot2::scale_colour_gradientn(colours = cols),
+      fill = ggplot2::scale_fill_gradientn(colours = cols)
+    ))
+  }
+  lv <- unique(unlist(lapply(
+    vals, function(v) if (is.factor(v)) levels(v) else unique(as.character(v))
+  )))
+  values <- palette_values(pal, lv)
+  switch(
+    aesthetic,
+    colour = ggplot2::scale_colour_manual(values = values),
+    fill = ggplot2::scale_fill_manual(values = values)
+  )
+}
+
 # Default titles come from the layers (first one wins), then user titles
 build_labs <- function(res, explicit) {
-  lab <- list()
-  for (r in res) {
-    for (a in names(r$labels)) {
-      cur <- lab[[a]]
-      if (is.null(cur) || is.na(cur)) lab[[a]] <- r$labels[[a]]
-    }
-  }
+  lab <- Reduce(merge_labels, lapply(res, function(r) r$labels), list())
   lab <- utils::modifyList(lab, explicit)
   lab <- lapply(lab, function(v) if (length(v) == 1L && is.na(v)) NULL else v)
   # lapply drops nothing but keeps NULL entries, which ggplot2 reads as
   # "remove this title"
   do.call(ggplot2::labs, lab)
+}
+
+# Keep the first non-NA title of each aesthetic
+merge_labels <- function(acc, new) {
+  for (a in names(new)) {
+    if (is.null(acc[[a]]) || is.na(acc[[a]])) acc[[a]] <- new[[a]]
+  }
+  acc
 }
 
 add_legend <- function(p, legend) {
