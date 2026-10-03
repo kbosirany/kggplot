@@ -1,3 +1,5 @@
+# kggplot (development version)
+
 # kggplot 0.1.0
 
 * First version, extracted from kplot (its ggplot2 part) and refactored.
