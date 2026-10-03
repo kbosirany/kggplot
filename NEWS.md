@@ -1,4 +1,4 @@
-# kggplot 0.0.0.9000
+# kggplot 0.1.0
 
 * First version, extracted from kplot (its ggplot2 part) and refactored.
 * `kggplot()` draws a complete plot in one call: data reshaping (several `y`
