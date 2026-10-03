@@ -30,9 +30,12 @@ Imports:
     utils
 Suggests:
     ggConvexHull,
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Remotes:
     git::https://github.com/cmartin/ggConvexHull.git
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
