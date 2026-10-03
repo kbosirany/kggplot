@@ -6,6 +6,21 @@ test_that("registered theme applies its palette", {
   )
 })
 
+test_that("the inrae theme is self-contained and honours the font option", {
+  th <- resolve_theme("inrae", 14)$theme
+  expect_s3_class(th, "theme")
+  expect_equal(th$text$size, 14)
+  expect_equal(th$strip.background$fill, "#00a3a6")
+  withr_old <- options(kggplot.base_family = "serif")
+  on.exit(options(withr_old))
+  expect_equal(resolve_theme("inrae")$theme$text$family, "serif")
+  expect_s3_class(
+    render(kggplot(iris, "Sepal.Length", "Sepal.Width", facet = "Species",
+                   theme = "inrae"))$plot,
+    "ggplot"
+  )
+})
+
 test_that("palette argument overrides the theme palette", {
   r <- render(kggplot(iris, "Sepal.Length", "Sepal.Width", color = "Species",
                       theme = "inrae", palette = c("red", "green", "blue")))

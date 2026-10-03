@@ -14,5 +14,8 @@
   vecteur, liste nommée.
 * Registres extensibles : `kgg_register_type()`, `kgg_register_theme()`,
   `kgg_register_palette()`.
+* Thème et palette `"inrae"` intégrés (palette de la charte INRAE), sans
+  dépendance à InraeThemes ; police réglable avec
+  `options(kggplot.base_family = )`.
 * `get_color_palette()` n'a plus de paramètre `cfg` : les palettes sont dans
   le registre de kggplot.

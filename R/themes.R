@@ -78,17 +78,38 @@ register_builtin_themes <- function() {
   kgg_register_theme("dark", ggplot2::theme_dark)
   kgg_register_theme("linedraw", ggplot2::theme_linedraw)
   kgg_register_theme("void", ggplot2::theme_void)
-  kgg_register_theme(
-    "inrae",
-    function(...) {
-      if (requireNamespace("InraeThemes", quietly = TRUE)) {
-        InraeThemes::theme_inrae(...)
-      } else {
-        ggplot2::theme_minimal(...)
-      }
-    },
-    palette = "inrae"
-  )
+  kgg_register_theme("inrae", theme_inrae, palette = "inrae")
+}
+
+# Minimal theme with the colours of the INRAE palette (institutional colour
+# for the facet strips, complementary greys for the grid and the frame). The
+# font is left to the user: set `options(kggplot.base_family = "Raleway")` or
+# register your own theme.
+theme_inrae <- function(base_size = 11,
+                        base_family = getOption("kggplot.base_family", "")) {
+  pal <- .kgg$palettes[["inrae"]]
+  ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(
+        size = ggplot2::rel(1.5), face = "bold"
+      ),
+      plot.subtitle = ggplot2::element_text(
+        size = ggplot2::rel(1.2), face = "italic"
+      ),
+      axis.text = ggplot2::element_text(color = pal[7L]),
+      panel.grid.major = ggplot2::element_line(
+        color = pal[5L], linetype = "dotted"
+      ),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.border = ggplot2::element_rect(
+        color = pal[7L], linewidth = 0.5, fill = NA
+      ),
+      plot.background = ggplot2::element_rect(fill = "white", color = NA),
+      strip.background = ggplot2::element_rect(fill = pal[1L], color = NA),
+      strip.text = ggplot2::element_text(
+        size = ggplot2::rel(1.1), face = "bold", color = "white"
+      )
+    )
 }
 
 # Resolve `theme` to list(theme = <ggplot2 theme or NULL>, palette = <colors>)

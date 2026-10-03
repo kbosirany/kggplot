@@ -86,6 +86,12 @@ Tout est S3 ou registre :
 * `kgg_register_theme()` et `kgg_register_palette()` : votre charte
   graphique. `options(kggplot.theme = "inrae")` en fait le thème par défaut.
 
+Le thème `"inrae"` est intégré à kggplot (palette de la charte INRAE et thème
+minimal, sans dépendance). Il n'impose pas de police :
+`options(kggplot.base_family = "Raleway")` pour utiliser Raleway. Pour le thème
+du paquet [InraeThemes](https://github.com/davidcarayon/InraeThemes), passez-le
+tel quel : `theme = InraeThemes::theme_inrae`.
+
 Les conventions de branches, de versions et de publication sont celles de
 [kpkg.r](https://github.com/kbosirany/kpkg.r) :
 `vignette("workflow", package = "kpkg.r")`.

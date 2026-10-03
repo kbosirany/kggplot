@@ -30,7 +30,6 @@ Imports:
     utils
 Suggests:
     ggConvexHull,
-    InraeThemes,
     testthat (>= 3.0.0)
 Remotes:
     git::https://github.com/cmartin/ggConvexHull.git
