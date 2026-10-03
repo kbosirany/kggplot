@@ -1,22 +1,21 @@
 # kggplot 0.0.0.9000
 
-* Première version, extraite de kplot (partie ggplot2) et refactorée.
-* `kggplot()` dessine un graphique complet en un appel : mise en forme des
-  données (plusieurs `y` empilés en format long), variables, type de
-  graphique (deviné si omis), titres, thème, palette, légende et facettes.
-  Le résultat est un objet S3 `kggplot`, converti en `ggplot` à l'affichage
-  (`as_ggplot()`).
-* Composition : `+` entre deux `kggplot` (couleurs et légende partagées),
-  `kggplot(p, data)`, `kgg_add()`, et ajout de composants ggplot2 avec `+`.
-  Modificateurs : `kgg_labs()`, `kgg_theme()`, `kgg_palette()`,
-  `kgg_legend()`, `kgg_facet()`, `kgg_save()`.
-* `as_kdata()` (S3) convertit les entrées : `data.frame`, `ts`, matrice,
-  vecteur, liste nommée.
-* Registres extensibles : `kgg_register_type()`, `kgg_register_theme()`,
+* First version, extracted from kplot (its ggplot2 part) and refactored.
+* `kggplot()` draws a complete plot in one call: data reshaping (several `y`
+  columns are stacked in long format), variables, plot type (guessed when
+  omitted), titles, theme, palette, legend and facets. The result is a
+  `kggplot` S3 object, turned into a `ggplot` when printed (`as_ggplot()`).
+* Composition: `+` between two `kggplot` objects (shared colours and legend),
+  `kggplot(p, data)`, `kgg_add()`, and ggplot2 components added with `+`.
+  Modifiers: `kgg_labs()`, `kgg_theme()`, `kgg_palette()`, `kgg_legend()`,
+  `kgg_facet()`, `kgg_save()`.
+* `as_kdata()` (S3) converts the input: `data.frame`, `ts`, matrix, vector,
+  named list.
+* Extensible registries: `kgg_register_type()`, `kgg_register_theme()`,
   `kgg_register_palette()`.
-* Thème et palette `"inrae"` intégrés (palette de la charte INRAE), sans
-  dépendance à InraeThemes ; couleurs conformes à la charte graphique INRAE
-  v4.2 ; polices réglables avec `options(kggplot.base_family = )` et
-  `options(kggplot.title_family = )`.
-* `get_color_palette()` n'a plus de paramètre `cfg` : les palettes sont dans
-  le registre de kggplot.
+* Built-in `"inrae"` theme and palette following the INRAE graphic charter
+  v4.2, with no dependency on InraeThemes; fonts can be set with
+  `options(kggplot.base_family = )` and `options(kggplot.title_family = )`.
+* `get_color_palette()` no longer has a `cfg` argument: palettes live in the
+  kggplot registry.
+* "Get started" vignette.
