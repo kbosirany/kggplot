@@ -86,10 +86,13 @@ Tout est S3 ou registre :
 * `kgg_register_theme()` et `kgg_register_palette()` : votre charte
   graphique. `options(kggplot.theme = "inrae")` en fait le thème par défaut.
 
-Le thème `"inrae"` est intégré à kggplot (palette de la charte INRAE et thème
-minimal, sans dépendance). Il n'impose pas de police :
-`options(kggplot.base_family = "Raleway")` pour utiliser Raleway. Pour le thème
-du paquet [InraeThemes](https://github.com/davidcarayon/InraeThemes), passez-le
+Le thème `"inrae"` est intégré à kggplot, sans dépendance : palette de la
+charte graphique INRAE (v4.2, avril 2024 : couleur institutionnelle `#00a3a6` et
+six couleurs complémentaires) et thème minimal. La charte fixe Raleway pour les
+titres et Avenir Next Pro Condensed pour le texte ; ces polices doivent être
+installées, kggplot n'en impose donc aucune :
+`options(kggplot.title_family = "Raleway", kggplot.base_family = "Avenir Next Condensed")`.
+Pour le thème du paquet [InraeThemes](https://github.com/davidcarayon/InraeThemes), passez-le
 tel quel : `theme = InraeThemes::theme_inrae`.
 
 Les conventions de branches, de versions et de publication sont celles de

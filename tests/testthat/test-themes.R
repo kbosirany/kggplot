@@ -11,9 +11,15 @@ test_that("the inrae theme is self-contained and honours the font option", {
   expect_s3_class(th, "theme")
   expect_equal(th$text$size, 14)
   expect_equal(th$strip.background$fill, "#00a3a6")
-  withr_old <- options(kggplot.base_family = "serif")
-  on.exit(options(withr_old))
-  expect_equal(resolve_theme("inrae")$theme$text$family, "serif")
+  old_opts <- options(
+    kggplot.base_family = "serif", kggplot.title_family = "mono"
+  )
+  on.exit(options(old_opts))
+  th <- resolve_theme("inrae")$theme
+  expect_equal(th$text$family, "serif")
+  expect_equal(th$plot.title$family, "mono")
+  options(kggplot.title_family = NULL)
+  expect_equal(resolve_theme("inrae")$theme$plot.title$family, "serif")
   expect_s3_class(
     render(kggplot(iris, "Sepal.Length", "Sepal.Width", facet = "Species",
                    theme = "inrae"))$plot,

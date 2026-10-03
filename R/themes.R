@@ -81,20 +81,26 @@ register_builtin_themes <- function() {
   kgg_register_theme("inrae", theme_inrae, palette = "inrae")
 }
 
-# Minimal theme with the colours of the INRAE palette (institutional colour
-# for the facet strips, complementary greys for the grid and the frame). The
-# font is left to the user: set `options(kggplot.base_family = "Raleway")` or
-# register your own theme.
+# Minimal theme with the colours of the INRAE graphic charter v4.2 (April
+# 2024, p. 14-15): institutional colour for the facet strips, complementary
+# greys for the grid and the frame. The charter (p. 16) sets Raleway for
+# titles and Avenir Next Pro Condensed for the text. They are proprietary or
+# need to be installed, so no font is forced: set
+# options(kggplot.title_family = "Raleway") and
+# options(kggplot.base_family = "Avenir Next Condensed").
 theme_inrae <- function(base_size = 11,
-                        base_family = getOption("kggplot.base_family", "")) {
+                        base_family = getOption("kggplot.base_family", ""),
+                        title_family = getOption(
+                          "kggplot.title_family", base_family
+                        )) {
   pal <- .kgg$palettes[["inrae"]]
   ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
       plot.title = ggplot2::element_text(
-        size = ggplot2::rel(1.5), face = "bold"
+        family = title_family, size = ggplot2::rel(1.5), face = "bold"
       ),
       plot.subtitle = ggplot2::element_text(
-        size = ggplot2::rel(1.2), face = "italic"
+        family = title_family, size = ggplot2::rel(1.2), face = "italic"
       ),
       axis.text = ggplot2::element_text(color = pal[7L]),
       panel.grid.major = ggplot2::element_line(
