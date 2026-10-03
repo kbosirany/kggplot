@@ -1,7 +1,7 @@
 Package: kggplot
 Type: Package
 Title: Concise, Composable 'ggplot2' Plots from a Single Call
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person(
       given = c("Kevin", "Bosirany"),
@@ -30,9 +30,12 @@ Imports:
     utils
 Suggests:
     ggConvexHull,
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Remotes:
     git::https://github.com/cmartin/ggConvexHull.git
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1

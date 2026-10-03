@@ -1,7 +1,7 @@
-# Template kpkg.r 0.1.0: project/_pkgdown.yml
+# Template kpkg.r 0.1.0.9000: project/_pkgdown.yml
 url: https://kbosirany.github.io/kggplot/
 
-lang: fr
+lang: en
 
 template:
   bootstrap: 5
