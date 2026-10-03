@@ -1,6 +1,6 @@
 # Changelog
 
-## kggplot 0.0.0.9000
+## kggplot 0.1.0
 
 - First version, extracted from kplot (its ggplot2 part) and refactored.
 - [`kggplot()`](https://kbosirany.github.io/kggplot/dev/reference/kggplot.md)
