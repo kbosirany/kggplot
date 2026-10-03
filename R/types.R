@@ -112,7 +112,10 @@ register_builtin_types <- function() {
     "convexhull",
     function(...) {
       if (!requireNamespace("ggConvexHull", quietly = TRUE)) {
-        stop("Type 'convexhull' needs the 'ggConvexHull' package.", call. = FALSE)
+        stop(
+          "Type 'convexhull' needs the 'ggConvexHull' package.",
+          call. = FALSE
+        )
       }
       ggConvexHull::geom_convexhull(...)
     },

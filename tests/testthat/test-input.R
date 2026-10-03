@@ -32,8 +32,9 @@ test_that("each input type can be plotted directly", {
 })
 
 test_that("S3 extension: a new class only needs an as_kdata method", {
-  as_kdata.myclass <- function(x, ...) data.frame(a = x$a, b = x$b)
-  registerS3method("as_kdata", "myclass", as_kdata.myclass)
+  registerS3method(
+    "as_kdata", "myclass", function(x, ...) data.frame(a = x$a, b = x$b)
+  )
   obj <- structure(list(a = 1:3, b = 3:1), class = "myclass")
   expect_s3_class(render(kggplot(obj, "a", "b"))$plot, "ggplot")
 })

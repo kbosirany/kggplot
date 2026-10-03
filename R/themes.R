@@ -78,17 +78,44 @@ register_builtin_themes <- function() {
   kgg_register_theme("dark", ggplot2::theme_dark)
   kgg_register_theme("linedraw", ggplot2::theme_linedraw)
   kgg_register_theme("void", ggplot2::theme_void)
-  kgg_register_theme(
-    "inrae",
-    function(...) {
-      if (requireNamespace("InraeThemes", quietly = TRUE)) {
-        InraeThemes::theme_inrae(...)
-      } else {
-        ggplot2::theme_minimal(...)
-      }
-    },
-    palette = "inrae"
-  )
+  kgg_register_theme("inrae", theme_inrae, palette = "inrae")
+}
+
+# Minimal theme with the colours of the INRAE graphic charter v4.2 (April
+# 2024, p. 14-15): institutional colour for the facet strips, complementary
+# greys for the grid and the frame. The charter (p. 16) sets Raleway for
+# titles and Avenir Next Pro Condensed for the text. They are proprietary or
+# need to be installed, so no font is forced: set
+# options(kggplot.title_family = "Raleway") and
+# options(kggplot.base_family = "Avenir Next Condensed").
+theme_inrae <- function(base_size = 11,
+                        base_family = getOption("kggplot.base_family", ""),
+                        title_family = getOption(
+                          "kggplot.title_family", base_family
+                        )) {
+  pal <- .kgg$palettes[["inrae"]]
+  ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(
+        family = title_family, size = ggplot2::rel(1.5), face = "bold"
+      ),
+      plot.subtitle = ggplot2::element_text(
+        family = title_family, size = ggplot2::rel(1.2), face = "italic"
+      ),
+      axis.text = ggplot2::element_text(color = pal[7L]),
+      panel.grid.major = ggplot2::element_line(
+        color = pal[5L], linetype = "dotted"
+      ),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.border = ggplot2::element_rect(
+        color = pal[7L], linewidth = 0.5, fill = NA
+      ),
+      plot.background = ggplot2::element_rect(fill = "white", color = NA),
+      strip.background = ggplot2::element_rect(fill = pal[1L], color = NA),
+      strip.text = ggplot2::element_text(
+        size = ggplot2::rel(1.1), face = "bold", color = "white"
+      )
+    )
 }
 
 # Resolve `theme` to list(theme = <ggplot2 theme or NULL>, palette = <colors>)
@@ -103,7 +130,10 @@ resolve_theme <- function(theme = NULL, base_size = NULL) {
   if (inherits(theme, "theme")) return(list(theme = theme, palette = NULL))
   if (is.function(theme)) return(list(theme = build(theme), palette = NULL))
   if (!is.character(theme) || length(theme) != 1L) {
-    stop("`theme` must be a name, a function or a ggplot2 theme.", call. = FALSE)
+    stop(
+      "`theme` must be a name, a function or a ggplot2 theme.",
+      call. = FALSE
+    )
   }
 
   entry <- .kgg$themes[[theme]]
@@ -130,10 +160,13 @@ resolve_palette <- function(palette) {
   palette <- palette %||% getOption("kggplot.palette")
   if (is.null(palette) || is.function(palette)) return(palette)
   if (!is.character(palette)) {
-    stop("`palette` must be colours, a palette name or a function.", call. = FALSE)
+    stop(
+      "`palette` must be colours, a palette name or a function.",
+      call. = FALSE
+    )
   }
-  if (length(palette) == 1L && is.null(names(palette)) &&
-      !is.null(.kgg$palettes[[palette]])) {
+  is_name <- length(palette) == 1L && is.null(names(palette))
+  if (is_name && !is.null(.kgg$palettes[[palette]])) {
     return(.kgg$palettes[[palette]])
   }
   palette
@@ -144,9 +177,11 @@ palette_values <- function(pal, levels) {
   n <- length(levels)
   if (is.function(pal)) return(stats::setNames(pal(n), levels))
   if (!is.null(names(pal))) return(pal)
-  cols <- if (n <= length(pal)) pal[seq_len(n)] else {
+  if (n <= length(pal)) {
+    cols <- pal[seq_len(n)]
+  } else {
     if (n > 100L) message("Can't generate palette for more than 100 colors")
-    grDevices::colorRampPalette(pal)(n)
+    cols <- grDevices::colorRampPalette(pal)(n)
   }
   stats::setNames(cols, levels)
 }

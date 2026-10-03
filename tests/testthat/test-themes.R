@@ -6,6 +6,27 @@ test_that("registered theme applies its palette", {
   )
 })
 
+test_that("the inrae theme is self-contained and honours the font option", {
+  th <- resolve_theme("inrae", 14)$theme
+  expect_s3_class(th, "theme")
+  expect_equal(th$text$size, 14)
+  expect_equal(th$strip.background$fill, "#00a3a6")
+  old_opts <- options(
+    kggplot.base_family = "serif", kggplot.title_family = "mono"
+  )
+  on.exit(options(old_opts))
+  th <- resolve_theme("inrae")$theme
+  expect_equal(th$text$family, "serif")
+  expect_equal(th$plot.title$family, "mono")
+  options(kggplot.title_family = NULL)
+  expect_equal(resolve_theme("inrae")$theme$plot.title$family, "serif")
+  expect_s3_class(
+    render(kggplot(iris, "Sepal.Length", "Sepal.Width", facet = "Species",
+                   theme = "inrae"))$plot,
+    "ggplot"
+  )
+})
+
 test_that("palette argument overrides the theme palette", {
   r <- render(kggplot(iris, "Sepal.Length", "Sepal.Width", color = "Species",
                       theme = "inrae", palette = c("red", "green", "blue")))
@@ -70,16 +91,22 @@ test_that("custom themes, palettes and types can be registered", {
   expect_true("hollow" %in% kgg_types())
   r <- render(kggplot(iris, "Sepal.Length", "Sepal.Width", color = "Species",
                       theme = "tt", type = "hollow"))
-  expect_equal(unique(r$built$data[[1]]$colour), c("#111111", "#222222", "#333333"))
+  expect_equal(
+    unique(r$built$data[[1]]$colour), c("#111111", "#222222", "#333333")
+  )
   expect_equal(r$built$data[[1]]$shape[1], 1)
 })
 
 test_that("get_color_palette works as before", {
   expect_equal(
-    get_color_palette(c("A", "B", "C"), main_colors = c("red", "green", "blue")),
+    get_color_palette(
+      c("A", "B", "C"), main_colors = c("red", "green", "blue")
+    ),
     c(A = "red", B = "green", C = "blue")
   )
-  expect_equal(names(get_color_palette(c("a", "b"), theme = "inrae")), c("a", "b"))
+  expect_equal(
+    names(get_color_palette(c("a", "b"), theme = "inrae")), c("a", "b")
+  )
   expect_error(get_color_palette("a"), "theme")
   expect_length(get_color_palette(1:10, main_colors = c("red", "blue")), 10)
 })

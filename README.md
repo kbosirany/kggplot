@@ -1,31 +1,56 @@
 # kggplot
 
-ggplot2 is powerful, but a basic figure often costs a dozen lines.
-**kggplot** draws a complete plot in one call, and plots stay composable
-through the `kggplot` S3 class.
+<!-- badges: start -->
+[![R-CMD-check][check-badge]][check]
+
+[check-badge]:
+https://github.com/kbosirany/kggplot/actions/workflows/R-CMD-check.yaml/badge.svg
+[check]:
+https://github.com/kbosirany/kggplot/actions/workflows/R-CMD-check.yaml
+<!-- badges: end -->
+
+Site : <https://kbosirany.github.io/kggplot/> (version en développement :
+[/dev](https://kbosirany.github.io/kggplot/dev/))
+
+ggplot2 est puissant, mais une figure simple demande vite une dizaine de
+lignes. **kggplot** dessine un graphique complet en un seul appel, et les
+graphiques restent composables grâce à la classe S3 `kggplot`. C'est la partie
+ggplot2 de [kplot](https://github.com/kbosirany/kplot).
+
+## Installation
+
+```r
+# install.packages("pak")
+pak::pak("kbosirany/kggplot")
+```
+
+## Utilisation
 
 ```r
 library(kggplot)
 
 kggplot(iris, "Sepal.Length", "Sepal.Width", color = "Species",
         title = "Iris", theme = "inrae")
+
+# Plusieurs colonnes en y : le format long est géré pour vous
+kggplot(iris, "Sepal.Length", c("Sepal.Width", "Petal.Width"), type = "line")
 ```
 
-## What one call handles
+Ce qu'un seul appel gère :
 
-| Concern | Argument | Example |
+| Besoin | Argument | Exemple |
 |---|---|---|
-| Input data | `data` (S3 `as_kdata()`) | data frame, tibble, `ts`, matrix, vector, named list |
-| Reshaping | `y` | `y = c("a", "b")` or `y = "all"` → long format + colour by series |
-| Variables | `x y color fill group size shape alpha linetype label` | column names; `I("red")` for fixed values |
-| Plot type | `type` | `"point"`, `"line"`, `"bar"`, `"density"`, `"smooth"`, … (guessed if omitted) |
-| Titles | `title subtitle caption xlab ylab labels` | `NA` removes a title |
-| Theme / palette | `theme base_size palette` | registered names, any `theme_<name>()`, ggplot2 themes |
-| Legend | `legend` | `"bottom"`, `"none"`, `c(x, y)` |
-| Facets | `facet facet_args` | `"Species"`, `c("row", "col")`, `~ a`, `".series"` |
-| Geometry options | `...` | `bins = 10`, `linewidth = 1`, `width = .5` |
+| Données en entrée | `data` (S3 `as_kdata()`) | data frame, tibble, `ts`, matrice, vecteur, liste nommée |
+| Mise en forme | `y` | `y = c("a", "b")` ou `y = "all"` : format long, couleur par série |
+| Variables | `x y color fill group size shape alpha linetype label` | noms de colonnes ; `I("red")` pour une valeur fixe |
+| Type de graphique | `type` | `"point"`, `"line"`, `"bar"`, `"density"`, `"smooth"`... (deviné si omis) |
+| Titres | `title subtitle caption xlab ylab labels` | `NA` supprime un titre |
+| Thème et palette | `theme base_size palette` | noms enregistrés, tout `theme_<nom>()`, thèmes ggplot2 |
+| Légende | `legend` | `"bottom"`, `"none"`, `c(x, y)` |
+| Facettes | `facet facet_args` | `"Species"`, `c("ligne", "colonne")`, `~ a`, `".series"` |
+| Options de la géométrie | `...` | `bins = 10`, `linewidth = 1`, `width = .5` |
 
-## Composing plots
+## Composer des graphiques
 
 ```r
 obs <- data.frame(t = 1:10, v = cumsum(rep(1, 10)))
@@ -35,33 +60,41 @@ kggplot(obs, "t", "v", color = "Observed", type = "point", theme = "inrae") +
   kggplot(sim, "t", "v", color = "Simulated", type = "line")
 ```
 
-Layers share one legend and one palette (a level keeps its colour whatever the
-layer). The same can be written `kggplot(p, sim, ...)` or `kgg_add(p, sim, ...)`.
-Anything from ggplot2 can be added with `+` (`theme()`, `scale_*()`,
-`geom_hline()`, ...). Pipe-friendly setters change one thing at a time:
+Les couches partagent une légende et une palette : un niveau garde sa
+couleur quelle que soit la couche. On peut aussi écrire
+`kggplot(p, sim, ...)` ou `kgg_add(p, sim, ...)`. Tout composant ggplot2 s'ajoute
+avec `+` (`theme()`, `scale_*()`, `geom_hline()`...). Des modificateurs
+compatibles avec le pipe changent un élément à la fois :
 
 ```r
 p |>
-  kgg_labs(title = "New title") |>
+  kgg_labs(title = "Nouveau titre") |>
   kgg_theme("bw", base_size = 14) |>
   kgg_facet("Species", scales = "free") |>
   kgg_legend("bottom")
 ```
 
-Convert with `as_ggplot(p)` to continue in plain ggplot2; `kgg_save()` and
-`autoplot()` also accept a kggplot.
+`as_ggplot(p)` renvoie un `ggplot` pour continuer avec ggplot2 seul ;
+`kgg_save()` et `autoplot()` acceptent aussi un `kggplot`.
 
-## Extending
+## Étendre kggplot
 
-Everything is S3 or a registry:
+Tout est S3 ou registre :
 
-* `as_kdata()` — teach kggplot a new input class;
-* `kgg_register_type()` — a new plot type;
-* `kgg_register_theme()` / `kgg_register_palette()` — your house style.
-  `options(kggplot.theme = "inrae")` makes it the default.
+* `as_kdata()` : apprendre à kggplot une nouvelle classe d'entrée ;
+* `kgg_register_type()` : un nouveau type de graphique ;
+* `kgg_register_theme()` et `kgg_register_palette()` : votre charte
+  graphique. `options(kggplot.theme = "inrae")` en fait le thème par défaut.
 
-## Install
+Le thème `"inrae"` est intégré à kggplot, sans dépendance : palette de la
+charte graphique INRAE (v4.2, avril 2024 : couleur institutionnelle `#00a3a6` et
+six couleurs complémentaires) et thème minimal. La charte fixe Raleway pour les
+titres et Avenir Next Pro Condensed pour le texte ; ces polices doivent être
+installées, kggplot n'en impose donc aucune :
+`options(kggplot.title_family = "Raleway", kggplot.base_family = "Avenir Next Condensed")`.
+Pour le thème du paquet [InraeThemes](https://github.com/davidcarayon/InraeThemes), passez-le
+tel quel : `theme = InraeThemes::theme_inrae`.
 
-```r
-remotes::install_github("kbosirany/kggplot")
-```
+Les conventions de branches, de versions et de publication sont celles de
+[kpkg.r](https://github.com/kbosirany/kpkg.r) :
+`vignette("workflow", package = "kpkg.r")`.

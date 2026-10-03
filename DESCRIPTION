@@ -1,29 +1,38 @@
 Package: kggplot
+Type: Package
 Title: Concise, Composable 'ggplot2' Plots from a Single Call
 Version: 0.0.0.9000
-Authors@R: 
-    person("Kevin Bosirany", "Orlando", , "kevinbosirany@gmail.com",
-      role = c("aut", "cre"), comment = c(ORCID = "0009-0009-2784-3108"))
+Authors@R: c(
+    person(
+      given = c("Kevin", "Bosirany"),
+      family = "Orlando",
+      email = "kevinbosirany@gmail.com",
+      role = c("aut", "cre"),
+      comment = c(ORCID = "0009-0009-2784-3108")
+    )
+  )
 Description: Draw a complete 'ggplot2' graphic (data reshaping, mappings,
     geometry, labels, theme, palette, legend, facets) with a single short
     call, and compose plots with the '+' operator through the 'kggplot' S3
     class. Plot types, themes and palettes live in extensible registries.
 License: AGPL (>= 3)
-Depends: 
+URL: https://github.com/kbosirany/kggplot,
+    https://kbosirany.github.io/kggplot/
+BugReports: https://github.com/kbosirany/kggplot/issues
+Encoding: UTF-8
+Depends:
     R (>= 4.3.0)
-Imports: 
+Imports:
     ggplot2 (>= 3.4.0),
     grDevices,
     rlang,
     stats,
     utils
-Suggests: 
+Suggests:
     ggConvexHull,
-    InraeThemes,
     testthat (>= 3.0.0)
-Remotes: 
+Remotes:
     git::https://github.com/cmartin/ggConvexHull.git
-Encoding: UTF-8
+Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
-Config/testthat/edition: 3

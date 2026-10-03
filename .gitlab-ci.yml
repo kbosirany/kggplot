@@ -1,0 +1,87 @@
+# Template kpkg.r 0.1.0: gitlab/gitlab-ci.yml
+# GitLab CI equivalent of the GitHub workflows R-CMD-check.yaml and
+# pkgdown.yaml.
+#
+# - check: R CMD check with the released and the development version of R,
+#   on every branch and tag.
+# - pages: pkgdown site with GitLab Pages. GitLab Pages only keeps the last
+#   deployment, so the job builds both branches every time: main at the root
+#   of the site and dev in /dev (same layout as on GitHub Pages).
+
+stages:
+  - check
+  - deploy
+
+variables:
+  R_KEEP_PKG_SOURCE: "yes"
+  _R_CHECK_CRAN_INCOMING_: "false"
+  # pak installs the system requirements of the R packages (apt-get)
+  PKG_SYSREQS: "true"
+
+.r-setup:
+  image: rocker/r-ver:$R_VERSION
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y -qq --no-install-recommends pandoc qpdf git
+    - Rscript -e 'install.packages("pak")'
+
+check:
+  extends: .r-setup
+  stage: check
+  parallel:
+    matrix:
+      - R_VERSION: ["latest", "devel"]
+  script:
+    - Rscript -e 'pak::local_install_dev_deps(dependencies = TRUE)'
+    - Rscript -e 'pak::pkg_install("rcmdcheck")'
+    - |
+      Rscript -e 'rcmdcheck::rcmdcheck(
+        args = c("--no-manual", "--as-cran"),
+        build_args = "--no-manual",
+        error_on = "warning",
+        check_dir = "check"
+      )'
+  artifacts:
+    when: always
+    paths:
+      - check
+    expire_in: 1 week
+
+pages:
+  extends: .r-setup
+  stage: deploy
+  variables:
+    R_VERSION: "latest"
+    GIT_DEPTH: "0"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"
+  script:
+    - Rscript -e 'pak::pkg_install("pkgdown")'
+    - git fetch --quiet origin main
+    - git fetch --quiet origin dev || echo "No dev branch"
+    - |
+      # $1: branch, $2: pkgdown mode ("release" or "devel")
+      build_branch() {
+        git worktree add --force "/tmp/src-$1" "origin/$1"
+        cd "/tmp/src-$1"
+        Rscript -e 'pak::local_install_dev_deps()'
+        PKGDOWN_DEV_MODE="$2" KPKG_DEST="/tmp/site-$1" Rscript -e '
+          pkgdown::build_site(
+            new_process = FALSE,
+            override = list(
+              destination = Sys.getenv("KPKG_DEST"),
+              url = Sys.getenv("CI_PAGES_URL")
+            )
+          )'
+        cd "$CI_PROJECT_DIR"
+      }
+      build_branch main release
+      cp -r /tmp/site-main public
+      if git rev-parse --verify --quiet origin/dev > /dev/null; then
+        build_branch dev devel
+        # In devel mode, pkgdown writes the site in <destination>/dev
+        cp -r /tmp/site-dev/dev public/dev
+      fi
+  artifacts:
+    paths:
+      - public

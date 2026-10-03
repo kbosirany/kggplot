@@ -1,5 +1,10 @@
-^kggplot\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
+^LICENSE\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^public$
 ^\.github$
-^README\.md$
-^dev$
+^\.gitlab-ci\.yml$
+^\.lintr$

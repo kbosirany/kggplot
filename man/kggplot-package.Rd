@@ -7,6 +7,15 @@
 \description{
 Draw a complete 'ggplot2' graphic (data reshaping, mappings, geometry, labels, theme, palette, legend, facets) with a single short call, and compose plots with the '+' operator through the 'kggplot' S3 class. Plot types, themes and palettes live in extensible registries.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/kbosirany/kggplot}
+  \item \url{https://kbosirany.github.io/kggplot/}
+  \item Report bugs at \url{https://github.com/kbosirany/kggplot/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Kevin Bosirany Orlando \email{kevinbosirany@gmail.com} (\href{https://orcid.org/0009-0009-2784-3108}{ORCID})
 
