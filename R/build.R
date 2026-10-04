@@ -28,7 +28,7 @@ as_ggplot.ggplot <- function(x, ...) x
 #' @rdname as_ggplot
 as_ggplot.kggplot <- function(x, ...) {
   fvars <- facet_vars(x$facet)
-  res <- lapply(x$layers, resolve_layer, keep = fvars)
+  res <- harmonise_facets(lapply(x$layers, resolve_layer, keep = fvars), fvars)
 
   p <- ggplot2::ggplot()
   for (r in res) p <- p + make_geom(r)
@@ -107,13 +107,42 @@ add_legend <- function(p, legend) {
   p + ggplot2::theme(legend.position = legend)
 }
 
+# Layers with their own data must share the panels of a facet variable: when
+# it is a factor in some layer, every layer gets the same levels (those of the
+# factors first, then the other values), so panels and their order are the same.
+harmonise_facets <- function(res, fvars) {
+  for (f in fvars) {
+    vals <- Filter(Negate(is.null), lapply(res, function(r) r$data[[f]]))
+    if (!any(vapply(vals, is.factor, logical(1)))) next
+    lv <- unique(unlist(lapply(vals, function(v) {
+      if (is.factor(v)) levels(v) else unique(as.character(v))
+    })))
+    for (i in seq_along(res)) {
+      col <- res[[i]]$data[[f]]
+      if (!is.null(col)) {
+        res[[i]]$data[[f]] <- factor(as.character(col), levels = lv)
+      }
+    }
+  }
+  res
+}
+
 facet_vars <- function(facet) {
   if (is.null(facet)) return(character())
   if (inherits(facet, "formula")) return(setdiff(all.vars(facet), "."))
   as.character(facet)
 }
 
+# `switch` moves the strips to the other side: they are placed outside the axes
 add_facet <- function(p, facet, args) {
+  p <- add_facet_layer(p, facet, args)
+  if (!is.null(facet) && "switch" %in% names(args)) {
+    p <- p + ggplot2::theme(strip.placement = "outside")
+  }
+  p
+}
+
+add_facet_layer <- function(p, facet, args) {
   if (is.null(facet)) return(p)
   args <- args %||% list()
   if (inherits(facet, "formula")) {

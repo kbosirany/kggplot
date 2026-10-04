@@ -7,11 +7,15 @@
 #'
 #' @section Mapping aesthetics:
 #' `x`, `y`, `color`, `fill`, `group`, `size`, `shape`, `alpha`, `linetype`
-#' and `label` take column names (strings). Special values:
+#' and `label` take column names (strings). `ymin` and `ymax` (bands, error
+#' bars) and `xintercept` and `yintercept` (reference lines) are columns too.
+#' Special values:
 #' \itemize{
 #'   \item `y = c("a", "b")` or `y = "all"` plots several columns; they are
 #'   stacked in long format and coloured by series (the pseudo-column
-#'   `".series"` can be mapped to any aesthetic or facet).
+#'   `".series"` can be mapped to any aesthetic or facet). `ymin` and `ymax`
+#'   then take either one column (used for every series) or one column per
+#'   `y` column, in the same order.
 #'   \item a string that is not a column, passed to `color`, `fill` or
 #'   `group`, creates a legend entry: `color = "Observed"` names the layer.
 #'   \item `I("red")` (or a number, for `size`, `alpha`...) is a fixed
@@ -30,6 +34,10 @@
 #'   matrix, vector, named list). If a `kggplot`, a layer is added to it.
 #' @param x,y,color,fill,group,size,shape,alpha,linetype,label Aesthetics,
 #'   see Details. `colour` is accepted as an alias of `color`.
+#' @param ymin,ymax Columns holding the lower and upper bounds of a band or of
+#'   error bars, for the types `ribbon`, `pointrange` and `errorbar`.
+#' @param xintercept,yintercept Column of the position of a reference line, for
+#'   the types `vline` and `hline` (see [kgg_hline()] and [kgg_vline()]).
 #' @param vars Optional named list of aesthetics (`list(x = "a", y = "b")`),
 #'   an alternative to the arguments above (they take precedence).
 #' @param type Plot type, see [kgg_types()]; or a geom function. By default
@@ -49,10 +57,12 @@
 #' @param legend `"right"`, `"bottom"`, `"top"`, `"left"`, `"none"`/`FALSE`,
 #'   or `c(x, y)` to place it inside the panel.
 #' @param facet Facet variable(s): one name (wrap), two names (row, column
-#'   grid) or a formula.
+#'   grid) or a formula (`panel ~ .` for a column of panels). Layers with their
+#'   own data share the panels, in the same order.
 #' @param facet_args Named list of extra arguments for
 #'   [ggplot2::facet_wrap()]/[ggplot2::facet_grid()], e.g.
-#'   `list(scales = "free_y")`.
+#'   `list(scales = "free_y")`. With `switch`, the strips are placed outside
+#'   the axes.
 #' @param new_data For the `kggplot` method: data of the new layer (default:
 #'   the data of the first layer).
 #' @param ... Extra parameters of the geometry (`size = 3` is an aesthetic
@@ -75,6 +85,13 @@
 #' # time series input
 #' kggplot(AirPassengers, title = "Air passengers", theme = "minimal")
 #'
+#' # a band around a line, from ymin / ymax columns
+#' d <- data.frame(t = 1:20, m = sin(1:20 / 3))
+#' d$lo <- d$m - 0.2
+#' d$hi <- d$m + 0.2
+#' kggplot(d, "t", "m", ymin = "lo", ymax = "hi", type = "ribbon") +
+#'   kggplot(d, "t", "m", type = "line")
+#'
 #' # superpose a second dataset: consistent colours and a shared legend
 #' obs <- data.frame(t = 1:10, v = cumsum(rep(1, 10)))
 #' sim <- data.frame(t = 1:10, v = cumsum(rep(1.2, 10)))
@@ -92,6 +109,7 @@ kggplot.default <- function(
   data,
   x = NULL, y = NULL, color = NULL, fill = NULL, group = NULL, size = NULL,
   shape = NULL, alpha = NULL, linetype = NULL, label = NULL,
+  ymin = NULL, ymax = NULL, xintercept = NULL, yintercept = NULL,
   vars = NULL, type = NULL,
   title = NULL, subtitle = NULL, caption = NULL, xlab = NULL, ylab = NULL,
   labels = NULL,
@@ -108,7 +126,8 @@ kggplot.default <- function(
 
   args <- norm_list(list(
     x = x, y = y, colour = color, fill = fill, group = group, size = size,
-    shape = shape, alpha = alpha, linetype = linetype, label = label
+    shape = shape, alpha = alpha, linetype = linetype, label = label,
+    ymin = ymin, ymax = ymax, xintercept = xintercept, yintercept = yintercept
   ))
   vars <- norm_list(vars)
   for (nm in setdiff(names(vars), names(args))) args[[nm]] <- vars[[nm]]

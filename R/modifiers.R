@@ -38,7 +38,11 @@ kgg_add <- function(p, data = NULL, ...) {
   first <- p$layers[[1L]]
   given <- c(norm_aes_names(names(dots)), names(norm_list(dots$vars)))
   new_src <- if (is.null(data)) first$source else as_kdata(data)
-  for (a in setdiff(names(first$mapped), given)) {
+  # bands and intercepts belong to one layer, they are not inherited
+  inherited <- setdiff(
+    names(first$mapped), c(y_aes, "xintercept", "yintercept")
+  )
+  for (a in setdiff(inherited, given)) {
     if (all(first$mapped[[a]] %in% c(names(new_src), ".series", "all"))) {
       dots[[a]] <- first$mapped[[a]]
     }

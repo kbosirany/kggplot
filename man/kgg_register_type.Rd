@@ -10,8 +10,10 @@ kgg_register_type(
   geom,
   params = list(),
   univariate = FALSE,
-  series = c("colour", "fill"),
-  extra = NULL
+  series = c("colour", "fill", "none"),
+  extra = NULL,
+  free = FALSE,
+  intercept = NULL
 )
 
 kgg_types()
@@ -29,10 +31,17 @@ layer parameters.}
 density, ...): \code{y} is ignored and used as \code{x} when \code{x} is missing.}
 
 \item{series}{Aesthetic (\code{"colour"} or \code{"fill"}) mapped to the series name
-when several \code{y} variables are plotted.}
+when several \code{y} variables are plotted, or \code{"none"} for no default
+mapping (e.g. black error bars).}
 
 \item{extra}{Optional function without argument returning an extra ggplot2
 component (scale, limits, ...) added with the layer.}
+
+\item{free}{If \code{TRUE}, \code{x} and \code{y} are optional and the layer gives no axis
+title (e.g. \code{blank}).}
+
+\item{intercept}{\code{"xintercept"} or \code{"yintercept"} for a reference line
+type: the layer reads that aesthetic instead of \code{x} and \code{y}.}
 }
 \value{
 \code{kgg_register_type()} returns \code{name} invisibly; \code{kgg_types()} a
@@ -47,7 +56,17 @@ can add your own with \code{kgg_register_type()}.
 Built-in types: \code{point}, \code{jitter}, \code{line}, \code{path}, \code{step}, \code{area},
 \code{smooth}, \code{text}, \code{bar} (alias \code{col}), \code{bar_dodge}, \code{count}, \code{histogram},
 \code{density}, \code{ecdf} (alias \code{cumFreq}), \code{boxplot}, \code{violin}, \code{convexhull}
-(needs the ggConvexHull package).
+(needs the ggConvexHull package), and
+\itemize{
+\item \code{ribbon}: a band between \code{ymin} and \code{ymax}, filled with the series
+colour (\code{alpha = 0.2}, no outline);
+\item \code{pointrange} and \code{errorbar}: a point (\code{y}) with its range
+(\code{ymin}, \code{ymax}), black and not coloured by series;
+\item \code{hline} and \code{vline}: reference lines at \code{yintercept} /
+\code{xintercept} (see \code{\link[=kgg_hline]{kgg_hline()}} and \code{\link[=kgg_vline]{kgg_vline()}});
+\item \code{blank}: draws nothing but trains the scales, to force the limits
+of some panels (see \code{\link[=kgg_limits]{kgg_limits()}}).
+}
 }
 \examples{
 kgg_types()
