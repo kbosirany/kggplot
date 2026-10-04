@@ -51,8 +51,10 @@ can add your own with <code>kgg_register_type()</code>.</p>
 <span>  <span class="va">geom</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  univariate <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  series <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"colour"</span>, <span class="st">"fill"</span><span class="op">)</span>,</span>
-<span>  extra <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  series <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"colour"</span>, <span class="st">"fill"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  extra <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  free <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  intercept <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">kgg_types</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -83,12 +85,23 @@ density, ...): <code>y</code> is ignored and used as <code>x</code> when <code>x
 
 <dt id="arg-series">series<a class="anchor" aria-label="anchor" href="#arg-series"></a></dt>
 <dd><p>Aesthetic (<code>"colour"</code> or <code>"fill"</code>) mapped to the series name
-when several <code>y</code> variables are plotted.</p></dd>
+when several <code>y</code> variables are plotted, or <code>"none"</code> for no default
+mapping (e.g. black error bars).</p></dd>
 
 
 <dt id="arg-extra">extra<a class="anchor" aria-label="anchor" href="#arg-extra"></a></dt>
 <dd><p>Optional function without argument returning an extra ggplot2
 component (scale, limits, ...) added with the layer.</p></dd>
+
+
+<dt id="arg-free">free<a class="anchor" aria-label="anchor" href="#arg-free"></a></dt>
+<dd><p>If <code>TRUE</code>, <code>x</code> and <code>y</code> are optional and the layer gives no axis
+title (e.g. <code>blank</code>).</p></dd>
+
+
+<dt id="arg-intercept">intercept<a class="anchor" aria-label="anchor" href="#arg-intercept"></a></dt>
+<dd><p><code>"xintercept"</code> or <code>"yintercept"</code> for a reference line
+type: the layer reads that aesthetic instead of <code>x</code> and <code>y</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -101,8 +114,15 @@ character vector of the registered types.</p>
     <p>Built-in types: <code>point</code>, <code>jitter</code>, <code>line</code>, <code>path</code>, <code>step</code>, <code>area</code>,
 <code>smooth</code>, <code>text</code>, <code>bar</code> (alias <code>col</code>), <code>bar_dodge</code>, <code>count</code>, <code>histogram</code>,
 <code>density</code>, <code>ecdf</code> (alias <code>cumFreq</code>), <code>boxplot</code>, <code>violin</code>, <code>convexhull</code>
-(needs the ggConvexHull package).</p>
-    </div>
+(needs the ggConvexHull package), and</p><ul><li><p><code>ribbon</code>: a band between <code>ymin</code> and <code>ymax</code>, filled with the series
+colour (<code>alpha = 0.2</code>, no outline);</p></li>
+<li><p><code>pointrange</code> and <code>errorbar</code>: a point (<code>y</code>) with its range
+(<code>ymin</code>, <code>ymax</code>), black and not coloured by series;</p></li>
+<li><p><code>hline</code> and <code>vline</code>: reference lines at <code>yintercept</code> /
+<code>xintercept</code> (see <code><a href="kgg_reference.html">kgg_hline()</a></code> and <code><a href="kgg_reference.html">kgg_vline()</a></code>);</p></li>
+<li><p><code>blank</code>: draws nothing but trains the scales, to force the limits
+of some panels (see <code><a href="kgg_reference.html">kgg_limits()</a></code>).</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -110,7 +130,8 @@ character vector of the registered types.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "point"      "jitter"     "line"       "path"       "step"      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "area"       "smooth"     "text"       "bar"        "col"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] "bar_dodge"  "count"      "histogram"  "density"    "ecdf"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "cumFreq"    "boxplot"    "violin"     "convexhull"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "cumFreq"    "boxplot"    "violin"     "ribbon"     "pointrange"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "errorbar"   "hline"      "vline"      "blank"      "convexhull"</span>
 <span class="r-in"><span><span class="fu">kgg_register_type</span><span class="op">(</span><span class="st">"hollow"</span>, <span class="fu">ggplot2</span><span class="fu">::</span><span class="va"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span>, params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="kggplot.html">kggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="st">"Sepal.Length"</span>, <span class="st">"Sepal.Width"</span>, type <span class="op">=</span> <span class="st">"hollow"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="kgg_register_type-1.png" alt="" width="700" height="433"></span>

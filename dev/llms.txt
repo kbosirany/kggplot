@@ -64,6 +64,10 @@ Branch, version and release conventions are those of
   [`kgg_legend()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_modify.md)
   [`kgg_facet()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_modify.md)
   : Modify a kggplot
+- [`kgg_hline()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_reference.md)
+  [`kgg_vline()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_reference.md)
+  [`kgg_limits()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_reference.md)
+  : Reference lines and panel limits
 - [`kgg_register_theme()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_register_theme.md)
   [`kgg_register_palette()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_register_theme.md)
   [`kgg_themes()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_register_theme.md)

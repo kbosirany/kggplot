@@ -204,7 +204,8 @@ bars for a categorical <code>x</code>, a histogram or counts for a lone
 <span><span class="co">#&gt;  [1] "point"      "jitter"     "line"       "path"       "step"      </span></span>
 <span><span class="co">#&gt;  [6] "area"       "smooth"     "text"       "bar"        "col"       </span></span>
 <span><span class="co">#&gt; [11] "bar_dodge"  "count"      "histogram"  "density"    "ecdf"      </span></span>
-<span><span class="co">#&gt; [16] "cumFreq"    "boxplot"    "violin"     "convexhull"</span></span></code></pre></div>
+<span><span class="co">#&gt; [16] "cumFreq"    "boxplot"    "violin"     "ribbon"     "pointrange"</span></span>
+<span><span class="co">#&gt; [21] "errorbar"   "hline"      "vline"      "blank"      "convexhull"</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/kggplot.html">kggplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">mtcars</span>, <span class="st">"cyl"</span>, fill <span class="op">=</span> <span class="st">"gear"</span>, type <span class="op">=</span> <span class="st">"count"</span>, palette <span class="op">=</span> <span class="st">"okabe_ito"</span>,</span>
@@ -300,13 +301,96 @@ original untouched:</p>
 <p><img src="kggplot_files/figure-html/modifiers-1.png" class="r-plt" alt="" width="576"></p>
 </div>
 <div class="section level2">
+<h2 id="bands-error-bars-reference-lines-and-panel-limits">Bands, error bars, reference lines and panel limits<a class="anchor" aria-label="anchor" href="#bands-error-bars-reference-lines-and-panel-limits"></a>
+</h2>
+<p>Four more building blocks make a multi-panel scientific figure
+possible with <code><a href="../reference/kggplot.html">kggplot()</a></code> and <code>+</code> only:</p>
+<ul>
+<li>
+<strong><code>ribbon</code></strong> draws a band between the
+<code>ymin</code> and <code>ymax</code> columns, filled with the series
+colour (<code>alpha = 0.2</code>, no outline). With several
+<code>y</code> columns, <code>ymin</code> and <code>ymax</code> take one
+column per <code>y</code>, in the same order (or a single column, shared
+by every series).</li>
+<li>
+<strong><code>pointrange</code></strong> and
+<strong><code>errorbar</code></strong> draw a point and its range, in
+black and not coloured by series (map <code>color</code> to
+override).</li>
+<li>
+<strong><code><a href="../reference/kgg_reference.html">kgg_hline()</a></code></strong> and
+<strong><code><a href="../reference/kgg_reference.html">kgg_vline()</a></code></strong> add reference lines. Give the
+positions as a vector to draw them in every panel, or a data frame
+holding the facet column to draw them in the matching panels only. Fixed
+appearance goes in the arguments: <code>linetype = "dashed"</code>,
+<code>color = I("grey40")</code>.</li>
+<li>
+<strong><code><a href="../reference/kgg_reference.html">kgg_limits()</a></code></strong> forces the range of the
+axes of some panels, which matters with free scales: it draws nothing
+but trains the scales.</li>
+</ul>
+<p>Layers with their own data share the panels of a facet variable, in
+the same order, and a series keeps its colour across layers.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-05-01"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"day"</span>, length.out <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span>
+<span><span class="va">panels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LAI"</span>, <span class="st">"Available water ratio"</span>, <span class="st">"Irrigation"</span><span class="op">)</span></span>
+<span><span class="va">simulate</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">simulation</span>, <span class="va">shift</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">lai</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">pi</span>, length.out <span class="op">=</span> <span class="fl">60</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="va">shift</span><span class="op">)</span></span>
+<span>  <span class="va">awr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.8</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span>, length.out <span class="op">=</span> <span class="fl">60</span><span class="op">)</span> <span class="op">+</span> <span class="va">shift</span> <span class="op">/</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">irr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">dates</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">10</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fl">20</span> <span class="op">+</span> <span class="fl">5</span> <span class="op">*</span> <span class="va">shift</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">dates</span>, <span class="fl">3</span><span class="op">)</span>, simulation <span class="op">=</span> <span class="va">simulation</span>,</span>
+<span>    panel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">panels</span>, each <span class="op">=</span> <span class="fl">60</span><span class="op">)</span>, levels <span class="op">=</span> <span class="va">panels</span><span class="op">)</span>,</span>
+<span>    mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">lai</span>, <span class="va">awr</span>, <span class="va">irr</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">60</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.08</span>, <span class="fl">60</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="st">"Simulation"</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="st">"Reference"</span>, <span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sims</span><span class="op">$</span><span class="va">lo</span> <span class="op">&lt;-</span> <span class="va">sims</span><span class="op">$</span><span class="va">mean</span> <span class="op">-</span> <span class="va">sims</span><span class="op">$</span><span class="va">sd</span></span>
+<span><span class="va">sims</span><span class="op">$</span><span class="va">hi</span> <span class="op">&lt;-</span> <span class="va">sims</span><span class="op">$</span><span class="va">mean</span> <span class="op">+</span> <span class="va">sims</span><span class="op">$</span><span class="va">sd</span></span>
+<span><span class="va">curves</span> <span class="op">&lt;-</span> <span class="va">sims</span><span class="op">[</span><span class="va">sims</span><span class="op">$</span><span class="va">panel</span> <span class="op">!=</span> <span class="st">"Irrigation"</span>, <span class="op">]</span></span>
+<span><span class="va">irrigation</span> <span class="op">&lt;-</span> <span class="va">sims</span><span class="op">[</span><span class="va">sims</span><span class="op">$</span><span class="va">panel</span> <span class="op">==</span> <span class="st">"Irrigation"</span> <span class="op">&amp;</span> <span class="va">sims</span><span class="op">$</span><span class="va">mean</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">]</span></span>
+<span></span>
+<span><span class="va">obs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  date <span class="op">=</span> <span class="va">dates</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">25</span>, <span class="fl">40</span>, <span class="fl">55</span><span class="op">)</span><span class="op">]</span>, lai <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">2.4</span>, <span class="fl">2.6</span>, <span class="fl">1.1</span><span class="op">)</span>,</span>
+<span>  panel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"LAI"</span>, levels <span class="op">=</span> <span class="va">panels</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">obs</span><span class="op">$</span><span class="va">lo</span> <span class="op">&lt;-</span> <span class="va">obs</span><span class="op">$</span><span class="va">lai</span> <span class="op">-</span> <span class="fl">0.25</span></span>
+<span><span class="va">obs</span><span class="op">$</span><span class="va">hi</span> <span class="op">&lt;-</span> <span class="va">obs</span><span class="op">$</span><span class="va">lai</span> <span class="op">+</span> <span class="fl">0.25</span></span>
+<span><span class="va">threshold</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  panel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"Available water ratio"</span>, levels <span class="op">=</span> <span class="va">panels</span><span class="op">)</span>, y <span class="op">=</span> <span class="fl">0.4</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Simulation <span class="op">=</span> <span class="st">"#00a3a6"</span>, Reference <span class="op">=</span> <span class="st">"#e07a5f"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/kggplot.html">kggplot</a></span><span class="op">(</span></span>
+<span>  <span class="va">curves</span>, <span class="st">"date"</span>, <span class="st">"mean"</span>, ymin <span class="op">=</span> <span class="st">"lo"</span>, ymax <span class="op">=</span> <span class="st">"hi"</span>, fill <span class="op">=</span> <span class="st">"simulation"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"ribbon"</span>, palette <span class="op">=</span> <span class="va">colors</span>, theme <span class="op">=</span> <span class="st">"inrae"</span>, legend <span class="op">=</span> <span class="st">"bottom"</span>,</span>
+<span>  facet <span class="op">=</span> <span class="va">panel</span> <span class="op">~</span> <span class="va">.</span>, facet_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>scales <span class="op">=</span> <span class="st">"free_y"</span>, switch <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="cn">NA</span>, ylab <span class="op">=</span> <span class="cn">NA</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>color <span class="op">=</span> <span class="cn">NA</span>, fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/kggplot.html">kggplot</a></span><span class="op">(</span><span class="va">curves</span>, <span class="st">"date"</span>, <span class="st">"mean"</span>, color <span class="op">=</span> <span class="st">"simulation"</span>, type <span class="op">=</span> <span class="st">"line"</span>,</span>
+<span>          linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/kggplot.html">kggplot</a></span><span class="op">(</span><span class="va">irrigation</span>, <span class="st">"date"</span>, <span class="st">"mean"</span>, fill <span class="op">=</span> <span class="st">"simulation"</span>, type <span class="op">=</span> <span class="st">"bar_dodge"</span>,</span>
+<span>          width <span class="op">=</span> <span class="fl">0.9</span>, position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/kggplot.html">kggplot</a></span><span class="op">(</span><span class="va">obs</span>, <span class="st">"date"</span>, <span class="st">"lai"</span>, ymin <span class="op">=</span> <span class="st">"lo"</span>, ymax <span class="op">=</span> <span class="st">"hi"</span>, type <span class="op">=</span> <span class="st">"pointrange"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/kgg_reference.html">kgg_hline</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">threshold</span>, yintercept <span class="op">=</span> <span class="st">"y"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>,</span>
+<span>            color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="st">"grey40"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/kgg_reference.html">kgg_vline</a></span><span class="op">(</span><span class="va">dates</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">30</span>, <span class="fl">45</span><span class="op">)</span><span class="op">]</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="st">"grey60"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/kgg_reference.html">kgg_limits</a></span><span class="op">(</span>panel <span class="op">=</span> <span class="st">"Available water ratio"</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="kggplot_files/figure-html/figure-1.png" class="r-plt" alt="" width="624"></p>
+<p>A formula such as <code>panel ~ .</code> gives a column of panels;
+<code>switch = "y"</code> moves the strips to the left and places them
+outside the axes. <code>NA</code> removes a title: here the axis titles
+and the legend title.</p>
+</div>
+<div class="section level2">
 <h2 id="going-back-to-ggplot2">Going back to ggplot2<a class="anchor" aria-label="anchor" href="#going-back-to-ggplot2"></a>
 </h2>
 <p><code><a href="../reference/as_ggplot.html">as_ggplot()</a></code> renders the specification into a regular
 <code>ggplot</code> object, for anything that is easier in plain
 ggplot2. <code><a href="../reference/kgg_save.html">kgg_save()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">ggplot2::autoplot()</a></code>
 also accept a <code>kggplot</code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_ggplot.html">as_ggplot</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ggplot2::ggplot" "ggplot"          "ggplot2::gg"     "S7_object"      </span></span>
@@ -328,7 +412,7 @@ maps a name to a geom function.</li>
 <code><a href="../reference/kgg_register_theme.html">kgg_register_theme()</a></code> and
 <code><a href="../reference/kgg_register_theme.html">kgg_register_palette()</a></code>.</li>
 </ul>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/kgg_register_theme.html">kgg_register_palette</a></span><span class="op">(</span><span class="st">"traffic"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#2ecc71"</span>, <span class="st">"#f1c40f"</span>, <span class="st">"#e74c3c"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/kgg_register_theme.html">kgg_register_theme</a></span><span class="op">(</span><span class="st">"traffic"</span>, <span class="fu">ggplot2</span><span class="fu">::</span><span class="va"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span>, palette <span class="op">=</span> <span class="st">"traffic"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/kgg_register_type.html">kgg_register_type</a></span><span class="op">(</span><span class="st">"hollow"</span>, <span class="fu">ggplot2</span><span class="fu">::</span><span class="va"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span>, params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
