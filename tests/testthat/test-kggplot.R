@@ -102,6 +102,8 @@ test_that("every built-in type renders", {
       },
       hline = kggplot(d, yintercept = "Sepal.Width", type = type),
       vline = kggplot(d, xintercept = "Sepal.Length", type = type),
+      # needs an sf object, see test-sf.R
+      sf = next,
       kggplot(d, "Sepal.Length", "Sepal.Width", type = type)
     )
     expect_s3_class(render(p)$plot, "ggplot")
