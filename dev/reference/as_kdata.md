@@ -15,6 +15,9 @@ as_kdata(x, ...)
 # S3 method for class 'data.frame'
 as_kdata(x, ...)
 
+# S3 method for class 'sf'
+as_kdata(x, ...)
+
 # S3 method for class 'ts'
 as_kdata(x, ...)
 
@@ -56,9 +59,10 @@ A data frame.
 
 ## Details
 
-Built-in methods: `data.frame` (and tibbles), `ts`/`mts`, `matrix`,
-atomic vectors (numeric, character, factor, logical), `list` of
-equal-length vectors.
+Built-in methods: `data.frame` (and tibbles), `sf` (a map: the geometry
+is kept and `fill` colours the polygons), `ts`/`mts`, `matrix`, atomic
+vectors (numeric, character, factor, logical), `list` of equal-length
+vectors.
 
 ## Examples
 

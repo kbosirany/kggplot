@@ -35,14 +35,13 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="kggplot-development-version">kggplot (development version)<a class="anchor" aria-label="anchor" href="#kggplot-development-version"></a></h2>
-<ul><li>New plot types: <code>ribbon</code> (band between <code>ymin</code> and <code>ymax</code>), <code>pointrange</code> and <code>errorbar</code> (black, not coloured by series), <code>hline</code> and <code>vline</code> (reference lines) and <code>blank</code> (trains the scales). <code>ymin</code>, <code>ymax</code>, <code>xintercept</code> and <code>yintercept</code> are new aesthetics; with several <code>y</code> columns, <code>ymin</code> and <code>ymax</code> are stacked with them (one column per <code>y</code>, or one shared column).</li>
-<li>New helpers <code><a href="../reference/kgg_reference.html">kgg_hline()</a></code>, <code><a href="../reference/kgg_reference.html">kgg_vline()</a></code> and <code><a href="../reference/kgg_reference.html">kgg_limits()</a></code>: reference lines in every panel or in the panels of a data frame only, and forced axis limits for some panels with free scales (<a href="https://github.com/kbosirany/kggplot/issues/7" class="external-link">#7</a>).</li>
-<li>Layers with their own data now share the panels of a facet variable, in the same order, whatever the type (factor or character) of the column.</li>
-<li>
-<code>switch</code> in <code>facet_args</code> places the strips outside the axes.</li>
-<li>
-<code><a href="../reference/kgg_register_type.html">kgg_register_type()</a></code> gains <code>series = "none"</code>, <code>free</code> and <code>intercept</code>; the defaults of a type (e.g. the black colour of <code>pointrange</code>) give way to an aesthetic the user maps.</li>
-<li>Fix: positional aesthetics are matched exactly (<code>x</code> no longer matches <code>xintercept</code>).</li>
+<ul><li><p><code>sf</code> objects are supported: the geometry is kept (<code><a href="../reference/as_kdata.html">as_kdata.sf()</a></code>) and the new plot type <code>sf</code> draws a map (<code>kggplot(sf, fill = "column")</code>), also with facets and discrete fills.</p></li>
+<li><p>New plot types: <code>ribbon</code> (band between <code>ymin</code> and <code>ymax</code>), <code>pointrange</code> and <code>errorbar</code> (black, not coloured by series), <code>hline</code> and <code>vline</code> (reference lines) and <code>blank</code> (trains the scales). <code>ymin</code>, <code>ymax</code>, <code>xintercept</code> and <code>yintercept</code> are new aesthetics; with several <code>y</code> columns, <code>ymin</code> and <code>ymax</code> are stacked with them (one column per <code>y</code>, or one shared column).</p></li>
+<li><p>New helpers <code><a href="../reference/kgg_reference.html">kgg_hline()</a></code>, <code><a href="../reference/kgg_reference.html">kgg_vline()</a></code> and <code><a href="../reference/kgg_reference.html">kgg_limits()</a></code>: reference lines in every panel or in the panels of a data frame only, and forced axis limits for some panels with free scales (<a href="https://github.com/kbosirany/kggplot/issues/7" class="external-link">#7</a>).</p></li>
+<li><p>Layers with their own data now share the panels of a facet variable, in the same order, whatever the type (factor or character) of the column.</p></li>
+<li><p><code>switch</code> in <code>facet_args</code> places the strips outside the axes.</p></li>
+<li><p><code><a href="../reference/kgg_register_type.html">kgg_register_type()</a></code> gains <code>series = "none"</code>, <code>free</code> and <code>intercept</code>; the defaults of a type (e.g. the black colour of <code>pointrange</code>) give way to an aesthetic the user maps.</p></li>
+<li><p>Fix: positional aesthetics are matched exactly (<code>x</code> no longer matches <code>xintercept</code>).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="kggplot-010">kggplot 0.1.0<a class="anchor" aria-label="anchor" href="#kggplot-010"></a></h2>
