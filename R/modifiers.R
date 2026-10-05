@@ -54,8 +54,9 @@ kgg_add <- function(p, data = NULL, ...) {
 #' @export
 #' @rdname kgg_modify
 kgg_labs <- function(p, title = NULL, subtitle = NULL, caption = NULL,
-                     x = NULL, y = NULL, ...) {
+                     x = NULL, y = NULL, y2 = NULL, ...) {
   check_kggplot(p)
+  if (!is.null(y2)) p$ylab2 <- y2
   new <- norm_list(c(
     list(title = title, subtitle = subtitle, caption = caption, x = x, y = y),
     list(...)
@@ -111,7 +112,7 @@ merge_kggplot <- function(a, b) {
   a$layers <- c(a$layers, b$layers)
   a$labels <- utils::modifyList(a$labels, b$labels)
   for (nm in c("theme", "base_size", "palette", "legend", "facet",
-               "facet_args")) {
+               "facet_args", "ylab2")) {
     if (!is.null(b[[nm]])) a[[nm]] <- b[[nm]]
   }
   a$extras <- c(a$extras, b$extras)

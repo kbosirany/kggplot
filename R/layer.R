@@ -42,7 +42,7 @@ classify_chr <- function(name, value, cols) {
   list(kind = "const", value = value)
 }
 
-new_layer <- function(source, args, type = NULL, params = list()) {
+new_layer <- function(source, args, type = NULL, params = list(), y2 = NULL) {
   cols <- c(names(source), ".series")
   kinds <- lapply(names(args), function(a) classify_aes(a, args[[a]], cols))
   names(kinds) <- names(args)
@@ -51,9 +51,10 @@ new_layer <- function(source, args, type = NULL, params = list()) {
     lapply(sel, function(cl) cl$value)
   }
   if (!is.null(type)) get_type(type) # validate early
+  y2 <- check_y2(y2, source, args, type)
   list(
     source = source, mapped = pick("col"), const = pick("const"),
-    fixed = utils::modifyList(pick("fixed"), params), type = type
+    fixed = utils::modifyList(pick("fixed"), params), type = type, y2 = y2
   )
 }
 
@@ -61,7 +62,7 @@ others_of <- function(mapped) mapped[setdiff(names(mapped), position_aes)]
 
 # x and y columns: explicit, else the hints of as_kdata(), else the first
 # column against all the others (a band given by ymin/ymax needs no y)
-default_xy <- function(src, mapped) {
+default_xy <- function(src, mapped, y2 = NULL) {
   cols <- names(src)
   others <- unlist(others_of(mapped))
   band <- unlist(mapped[y_aes])
@@ -70,10 +71,10 @@ default_xy <- function(src, mapped) {
   y <- mapped[["y"]]
   if (is.null(x) && is.null(y)) {
     x <- attr(src, "kgg_x") %||% cols[1L]
-    y <- attr(src, "kgg_y") %||% setdiff(cols, c(x, others))
+    y <- attr(src, "kgg_y") %||% setdiff(cols, c(x, others, y2))
     if (length(band)) y <- NULL
   }
-  if (identical(y, "all")) y <- setdiff(cols, c(x, others, band))
+  if (identical(y, "all")) y <- setdiff(cols, c(x, others, band, y2))
   list(x = x, y = if (length(y)) y)
 }
 
@@ -81,7 +82,8 @@ default_xy <- function(src, mapped) {
 # gets what it needs.
 plan_layer <- function(layer) {
   m <- layer$mapped
-  xy <- default_xy(layer$source, m)
+  y2 <- layer$y2
+  xy <- default_xy(layer$source, m, y2)
   type <- layer$type %||% infer_type(layer$source, xy$x, xy$y, m)
   spec <- get_type(type)
   mode <- spec$mode
@@ -93,10 +95,19 @@ plan_layer <- function(layer) {
   uni <- mode == "univariate"
   pivot_to_x <- uni && is.null(x)
   if (uni && !is.null(x)) y <- NULL
+  y_primary <- y
+  if (length(y2)) {
+    check_y2_type(type)
+    if (length(intersect(y_primary, y2))) {
+      stop("A column cannot be on both axes (`y` and `y2`).", call. = FALSE)
+    }
+    # all the series are stacked together; y2 tells which are on the right
+    y <- c(y_primary, y2)
+  }
   check_required(layer, spec, type, y)
   if (mode == "xy" && is.null(x)) x <- ".index"
   list(spec = spec, x = x, y = y, uni = uni, pivot_to_x = pivot_to_x,
-       mode = mode)
+       mode = mode, y2 = y2, y_primary = y_primary, type = type)
 }
 
 check_required <- function(layer, spec, type, y) {
@@ -212,7 +223,16 @@ axis_labels <- function(pl) {
     pl$x[1L]
   }
   if (!pl$uni) {
-    lab$y <- if (k == 1L) pl$y else if (k == 0L) NA_character_ else "value"
+    lab$y <- if (length(pl$y2)) {
+      # the left axis: the series of the primary axis
+      if (length(pl$y_primary)) paste(pl$y_primary, collapse = ", ") else NA_character_
+    } else if (k == 1L) {
+      pl$y
+    } else if (k == 0L) {
+      NA_character_
+    } else {
+      "value"
+    }
   }
   lab
 }
@@ -245,6 +265,11 @@ resolve_layer <- function(layer, keep = character()) {
 
   ser <- add_series_aes(std_columns(layer, st$d, st, pl), st$series, pl$spec)
   out <- ser$out
+
+  # the series of the secondary axis are dashed (lines), to tell them apart
+  auto_linetype <- length(pl$y2) > 0L && is.null(out$linetype) &&
+    is.null(layer$fixed$linetype) && pl$type %in% c("line", "path", "step")
+  if (auto_linetype) out$linetype <- st$series
   out$.series <- st$series
   for (f in setdiff(intersect(keep, cols), names(out))) out[[f]] <- st$d[[f]]
   attr(out, "row.names") <- .set_row_names(st$n)
@@ -257,10 +282,13 @@ resolve_layer <- function(layer, keep = character()) {
     out <- sf::st_as_sf(out, sf_column_name = "geometry")
   }
 
+  labels <- layer_labels(layer, pl, if (ser$used) pl$spec$series)
+  if (auto_linetype) labels$linetype <- NA_character_
+
   list(
-    data = out, aes = intersect(names(out), std_aes),
-    labels = layer_labels(layer, pl, if (ser$used) pl$spec$series),
-    params = layer$fixed, spec = pl$spec
+    data = out, aes = intersect(names(out), std_aes), labels = labels,
+    params = layer$fixed, spec = pl$spec, y2 = pl$y2,
+    auto_linetype = auto_linetype
   )
 }
 

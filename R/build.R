@@ -29,6 +29,8 @@ as_ggplot.ggplot <- function(x, ...) x
 as_ggplot.kggplot <- function(x, ...) {
   fvars <- facet_vars(x$facet)
   res <- harmonise_facets(lapply(x$layers, resolve_layer, keep = fvars), fvars)
+  y2 <- apply_y2(res)
+  res <- y2$res
 
   p <- ggplot2::ggplot()
   for (r in res) p <- p + make_geom(r)
@@ -37,6 +39,7 @@ as_ggplot.kggplot <- function(x, ...) {
   p <- add_color_scales(p, res, resolve_palette(x$palette %||% theme$palette))
   p <- p + build_labs(res, x$labels)
   if (!is.null(theme$theme)) p <- p + theme$theme
+  p <- add_y2_scales(p, y2, res, x$ylab2)
   p <- add_legend(p, x$legend)
   p <- add_facet(p, x$facet, x$facet_args)
 

@@ -24,6 +24,7 @@ kggplot(data, ...)
   ymax = NULL,
   xintercept = NULL,
   yintercept = NULL,
+  y2 = NULL,
   vars = NULL,
   type = NULL,
   title = NULL,
@@ -31,6 +32,7 @@ kggplot(data, ...)
   caption = NULL,
   xlab = NULL,
   ylab = NULL,
+  ylab2 = NULL,
   labels = NULL,
   theme = NULL,
   base_size = NULL,
@@ -59,6 +61,9 @@ error bars, for the types \code{ribbon}, \code{pointrange} and \code{errorbar}.}
 \item{xintercept, yintercept}{Column of the position of a reference line, for
 the types \code{vline} and \code{hline} (see \code{\link[=kgg_hline]{kgg_hline()}} and \code{\link[=kgg_vline]{kgg_vline()}}).}
 
+\item{y2}{Column(s) drawn on a secondary y axis (on the right), see the
+section "Secondary axis".}
+
 \item{vars}{Optional named list of aesthetics (\code{list(x = "a", y = "b")}),
 an alternative to the arguments above (they take precedence).}
 
@@ -70,6 +75,9 @@ guessed from the data (line for dates and \code{ts}, point for numeric
 
 \item{xlab, ylab}{Axis titles (default: the variable names). Use \code{NA} to
 remove a title.}
+
+\item{ylab2}{Title of the secondary axis (default: the names of the \code{y2}
+columns, \code{NA} for none).}
 
 \item{labels}{Named list of titles (\code{title}, \code{x}, \code{y}, \code{color}, \code{fill}...)
 for anything not covered by the arguments above, e.g. legend titles.}
@@ -126,6 +134,27 @@ value, not a mapping.
 \item \code{x} omitted: the first column (or the row index if \code{y} is given).
 \item \code{y} omitted: all the other columns.
 }
+}
+
+\section{Secondary axis}{
+
+\code{y2 = "col"} draws the column(s) on a secondary axis on the right, whose
+scale is independent from the left one: \code{kggplot(d, "date", "lai", y2 = "yield", type = "line")}. ggplot2 only draws an axis that is a
+transformation of the first one, so the series of \code{y2} are mapped linearly
+onto the range of the series of the primary axis (\code{a + b * y2}: the same
+minimum and maximum), and the axis on the right is the exact inverse. The
+map is the same in every layer and every facet panel: the labels of the
+right axis are always exact, but with free scales in the panels the series
+of the secondary axis do not fill each panel. The series of the secondary
+axis are dashed (with the types \code{line}, \code{path} and \code{step}, unless you map a
+\code{linetype}). A constant series, or missing values, are handled.
+It works with the types \code{point}, \code{jitter}, \code{line}, \code{path}, \code{step} and
+\code{smooth} (not with bars and areas, which start from zero, nor with \code{ymin} and
+\code{ymax}), a linear scale (not a log scale) and at least one series on the
+primary axis. Another layer can add series to the secondary axis with
+\code{+ kggplot(other_data, "x", y2 = "col")}. A \verb{scale_y_*()} that you add last
+replaces the secondary axis. The limits of \code{\link[=kgg_limits]{kgg_limits()}} are in the units of
+the primary axis.
 }
 
 \section{Extending a plot}{

@@ -19,6 +19,7 @@ kgg_labs(
   caption = NULL,
   x = NULL,
   y = NULL,
+  y2 = NULL,
   ...
 )
 

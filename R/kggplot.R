@@ -24,6 +24,26 @@
 #'   \item `y` omitted: all the other columns.
 #' }
 #'
+#' @section Secondary axis:
+#' `y2 = "col"` draws the column(s) on a secondary axis on the right, whose
+#' scale is independent from the left one: `kggplot(d, "date", "lai", y2 =
+#' "yield", type = "line")`. ggplot2 only draws an axis that is a
+#' transformation of the first one, so the series of `y2` are mapped linearly
+#' onto the range of the series of the primary axis (`a + b * y2`: the same
+#' minimum and maximum), and the axis on the right is the exact inverse. The
+#' map is the same in every layer and every facet panel: the labels of the
+#' right axis are always exact, but with free scales in the panels the series
+#' of the secondary axis do not fill each panel. The series of the secondary
+#' axis are dashed (with the types `line`, `path` and `step`, unless you map a
+#' `linetype`). A constant series, or missing values, are handled.
+#' It works with the types `point`, `jitter`, `line`, `path`, `step` and
+#' `smooth` (not with bars and areas, which start from zero, nor with `ymin` and
+#' `ymax`), a linear scale (not a log scale) and at least one series on the
+#' primary axis. Another layer can add series to the secondary axis with
+#' `+ kggplot(other_data, "x", y2 = "col")`. A `scale_y_*()` that you add last
+#' replaces the secondary axis. The limits of [kgg_limits()] are in the units of
+#' the primary axis.
+#'
 #' @section Extending a plot:
 #' `kggplot(p, new_data, ...)` (with `p` a kggplot), `p + kggplot(...)` and
 #' [kgg_add()] add a layer; colours stay consistent across layers. Any
@@ -46,6 +66,10 @@
 #' @param title,subtitle,caption Plot titles.
 #' @param xlab,ylab Axis titles (default: the variable names). Use `NA` to
 #'   remove a title.
+#' @param y2 Column(s) drawn on a secondary y axis (on the right), see the
+#'   section "Secondary axis".
+#' @param ylab2 Title of the secondary axis (default: the names of the `y2`
+#'   columns, `NA` for none).
 #' @param labels Named list of titles (`title`, `x`, `y`, `color`, `fill`...)
 #'   for anything not covered by the arguments above, e.g. legend titles.
 #' @param theme Theme: a name ([kgg_themes()], `"bw"`, ...), a ggplot2 theme
@@ -110,9 +134,9 @@ kggplot.default <- function(
   x = NULL, y = NULL, color = NULL, fill = NULL, group = NULL, size = NULL,
   shape = NULL, alpha = NULL, linetype = NULL, label = NULL,
   ymin = NULL, ymax = NULL, xintercept = NULL, yintercept = NULL,
-  vars = NULL, type = NULL,
+  y2 = NULL, vars = NULL, type = NULL,
   title = NULL, subtitle = NULL, caption = NULL, xlab = NULL, ylab = NULL,
-  labels = NULL,
+  ylab2 = NULL, labels = NULL,
   theme = NULL, base_size = NULL, palette = NULL, legend = NULL,
   facet = NULL, facet_args = NULL,
   ...
@@ -144,8 +168,8 @@ kggplot.default <- function(
   ))
 
   obj <- list(
-    layers = list(new_layer(source, args, type, params)),
-    labels = explicit,
+    layers = list(new_layer(source, args, type, params, y2)),
+    labels = explicit, ylab2 = ylab2,
     theme = theme, base_size = base_size, palette = palette, legend = legend,
     facet = facet, facet_args = facet_args,
     extras = list()

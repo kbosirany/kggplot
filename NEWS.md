@@ -1,5 +1,14 @@
 # kggplot (development version)
 
+* Secondary y axis: `y2 = "column"` draws columns on a second axis on the right
+  (title with `ylab2`, or `kgg_labs(y2 = )`). The series of `y2` are mapped
+  linearly onto the range of the primary series, and the axis on the right is
+  the exact inverse of the map, the same in every layer and every panel.
+  Constant, missing, negative and very different series are handled; the series
+  of the right axis are dashed (lines). Works with the types `point`, `jitter`,
+  `line`, `path`, `step` and `smooth`; bars and areas, `ymin`/`ymax` and a
+  missing primary series are refused with a clear message.
+
 * `sf` objects are supported: the geometry is kept (`as_kdata.sf()`) and the
   new plot type `sf` draws a map (`kggplot(sf, fill = "column")`), also with
   facets and discrete fills.

@@ -259,6 +259,41 @@ A formula such as `panel ~ .` gives a column of panels; `switch = "y"` moves the
 strips to the left and places them outside the axes. `NA` removes a title: here
 the axis titles and the legend title.
 
+## A secondary axis
+
+`y2` draws columns on a second y axis, on the right, whose scale is independent
+from the left one: here the leaf area index and a cumulated yield.
+
+```{r y2}
+d <- data.frame(day = 1:120)
+d$lai <- 5 * sin(d$day / 38)
+d$yield <- cumsum(runif(120, 0, 1)) * 3
+
+kggplot(
+  d, "day", "lai", y2 = "yield", type = "line",
+  ylab = "Leaf area index", ylab2 = "Yield (t/ha)"
+)
+```
+
+ggplot2 only draws a secondary axis that is a transformation of the first one.
+kggplot therefore maps the series of `y2` linearly onto the range of the
+primary series (same minimum and maximum), and draws the axis on the right as
+the exact inverse of this map: its labels are the real values. The map is the
+same in every layer and every panel. The series of the secondary axis are
+dashed, and a colour can still tell the groups apart:
+
+```{r y2-groups}
+d2 <- rbind(transform(d, scenario = "rainfed"),
+            transform(d, scenario = "irrigated", yield = yield * 1.6))
+
+kggplot(d2, "day", "lai", y2 = "yield", color = "scenario", type = "line")
+```
+
+Other layers can add series to the right axis (`+ kggplot(other, "day", y2 =
+"rain", type = "point")`). `y2` works with the types `point`, `jitter`, `line`,
+`path`, `step` and `smooth`, on a linear scale, and needs at least one series
+on the primary axis.
+
 ## Going back to ggplot2
 
 `as_ggplot()` renders the specification into a regular `ggplot` object, for
