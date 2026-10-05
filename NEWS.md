@@ -1,5 +1,9 @@
 # kggplot (development version)
 
+* `sf` objects are supported: the geometry is kept (`as_kdata.sf()`) and the
+  new plot type `sf` draws a map (`kggplot(sf, fill = "column")`), also with
+  facets and discrete fills.
+
 * New plot types: `ribbon` (band between `ymin` and `ymax`), `pointrange` and
   `errorbar` (black, not coloured by series), `hline` and `vline` (reference
   lines) and `blank` (trains the scales). `ymin`, `ymax`, `xintercept` and

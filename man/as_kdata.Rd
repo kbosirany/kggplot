@@ -3,6 +3,7 @@
 \name{as_kdata}
 \alias{as_kdata}
 \alias{as_kdata.data.frame}
+\alias{as_kdata.sf}
 \alias{as_kdata.ts}
 \alias{as_kdata.matrix}
 \alias{as_kdata.numeric}
@@ -16,6 +17,8 @@
 as_kdata(x, ...)
 
 \method{as_kdata}{data.frame}(x, ...)
+
+\method{as_kdata}{sf}(x, ...)
 
 \method{as_kdata}{ts}(x, ...)
 
@@ -49,7 +52,8 @@ variables to plot) and \code{kgg_type} (default plot type) on the result; they
 are only used when the call does not specify \code{x}, \code{y} or \code{type}.
 }
 \details{
-Built-in methods: \code{data.frame} (and tibbles), \code{ts}/\code{mts}, \code{matrix}, atomic
+Built-in methods: \code{data.frame} (and tibbles), \code{sf} (a map: the geometry is
+kept and \code{fill} colours the polygons), \code{ts}/\code{mts}, \code{matrix}, atomic
 vectors (numeric, character, factor, logical), \code{list} of equal-length
 vectors.
 }

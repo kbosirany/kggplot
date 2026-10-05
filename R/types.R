@@ -164,6 +164,10 @@ register_builtin_types <- function() {
   reg("vline", ggplot2::geom_vline, series = "none", intercept = "xintercept")
   reg("blank", ggplot2::geom_blank, series = "none", free = TRUE)
   reg(
+    "sf", ggplot2::geom_sf,
+    params = list(linewidth = 0.05), series = "fill", free = TRUE
+  )
+  reg(
     "convexhull",
     function(...) {
       if (!requireNamespace("ggConvexHull", quietly = TRUE)) {

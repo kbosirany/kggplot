@@ -250,6 +250,13 @@ resolve_layer <- function(layer, keep = character()) {
   attr(out, "row.names") <- .set_row_names(st$n)
   class(out) <- "data.frame"
 
+  # a map: the geometry is carried along, the layer data stay an `sf`
+  if (inherits(layer$source, "sf") && st$n == nrow(layer$source)) {
+    geometry <- sf::st_geometry(layer$source)
+    out$geometry <- geometry
+    out <- sf::st_as_sf(out, sf_column_name = "geometry")
+  }
+
   list(
     data = out, aes = intersect(names(out), std_aes),
     labels = layer_labels(layer, pl, if (ser$used) pl$spec$series),
