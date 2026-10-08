@@ -1,4 +1,7 @@
-# kggplot (development version)
+# kggplot 0.2.0
+
+This version draws maps (`sf` objects) and adds plot types and helpers for
+bands, reference lines and forced axis limits.
 
 * `sf` objects are supported: the geometry is kept (`as_kdata.sf()`) and the
   new plot type `sf` draws a map (`kggplot(sf, fill = "column")`), also with
