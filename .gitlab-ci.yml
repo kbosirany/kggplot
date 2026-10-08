@@ -23,7 +23,18 @@ variables:
   before_script:
     - apt-get update -qq
     - apt-get install -y -qq --no-install-recommends pandoc qpdf git
-    - Rscript -e 'install.packages("pak")'
+    # pak from the binaries of r-lib: R-devel has no binaries on CRAN, and
+    # building pak from the sources takes about 3 minutes
+    - |
+      Rscript -e '
+        pak_repo <- sprintf(
+          "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
+          .Platform$pkgType, R.Version()$os, R.Version()$arch
+        )
+        install.packages("pak", repos = pak_repo)
+        if (!requireNamespace("pak", quietly = TRUE)) {
+          install.packages("pak")
+        }'
 
 check:
   extends: .r-setup
