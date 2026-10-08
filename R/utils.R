@@ -7,9 +7,15 @@ const_factor <- function(label, n) {
 
 # Aesthetics understood by kggplot (US spelling "color" is normalised)
 std_aes <- c(
-  "x", "y", "colour", "fill", "group", "size", "shape", "alpha", "linetype",
-  "label"
+  "x", "y", "ymin", "ymax", "xintercept", "yintercept", "colour", "fill",
+  "group", "size", "shape", "alpha", "linetype", "label"
 )
+
+# Aesthetics that are read as columns of the data and never as a legend entry
+# or a fixed value: positions and intercepts. `ymin` and `ymax` are stacked
+# together with `y` when several y columns are given.
+y_aes <- c("ymin", "ymax")
+position_aes <- c("x", "y", y_aes)
 
 # Aesthetics that get a legend title
 legend_aes <- c("colour", "fill", "size", "shape", "alpha", "linetype")

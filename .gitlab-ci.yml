@@ -2,8 +2,8 @@
 # GitLab CI equivalent of the GitHub workflows R-CMD-check.yaml and
 # pkgdown.yaml.
 #
-# - check: R CMD check with the released and the development version of R,
-#   on every branch and tag.
+# - check: R CMD check with the released version of R on every branch and
+#   tag, and `check-devel` with the development version on dev and main.
 # - pages: pkgdown site with GitLab Pages. GitLab Pages only keeps the last
 #   deployment, so the job builds both branches every time: main at the root
 #   of the site and dev in /dev (same layout as on GitHub Pages).
@@ -23,14 +23,22 @@ variables:
   before_script:
     - apt-get update -qq
     - apt-get install -y -qq --no-install-recommends pandoc qpdf git
-    - Rscript -e 'install.packages("pak")'
+    # pak from the binaries of r-lib: R-devel has no binaries on CRAN, and
+    # building pak from the sources takes about 3 minutes
+    - |
+      Rscript -e '
+        pak_repo <- sprintf(
+          "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
+          .Platform$pkgType, R.Version()$os, R.Version()$arch
+        )
+        install.packages("pak", repos = pak_repo)
+        if (!requireNamespace("pak", quietly = TRUE)) {
+          install.packages("pak")
+        }'
 
-check:
+.check:
   extends: .r-setup
   stage: check
-  parallel:
-    matrix:
-      - R_VERSION: ["latest", "devel"]
   script:
     - Rscript -e 'pak::local_install_dev_deps(dependencies = TRUE)'
     - Rscript -e 'pak::pkg_install("rcmdcheck")'
@@ -46,6 +54,22 @@ check:
     paths:
       - check
     expire_in: 1 week
+
+check:
+  extends: .check
+  variables:
+    R_VERSION: "latest"
+
+# R-devel has no binaries on CRAN (the packages are built from the sources, so
+# the job is slow): it only runs on the dev and main branches, and it does not
+# block the pipeline.
+check-devel:
+  extends: .check
+  variables:
+    R_VERSION: "devel"
+  allow_failure: true
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"
 
 pages:
   extends: .r-setup

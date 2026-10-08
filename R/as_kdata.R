@@ -6,7 +6,8 @@
 #' variables to plot) and `kgg_type` (default plot type) on the result; they
 #' are only used when the call does not specify `x`, `y` or `type`.
 #'
-#' Built-in methods: `data.frame` (and tibbles), `ts`/`mts`, `matrix`, atomic
+#' Built-in methods: `data.frame` (and tibbles), `sf` (a map: the geometry is
+#' kept and `fill` colours the polygons), `ts`/`mts`, `matrix`, atomic
 #' vectors (numeric, character, factor, logical), `list` of equal-length
 #' vectors.
 #'
@@ -30,6 +31,15 @@ as_kdata <- function(x, ...) {
 as_kdata.data.frame <- function(x, ...) {
   if (ncol(x) == 0L) stop("`data` has no column.", call. = FALSE)
   as.data.frame(x)
+}
+
+#' @export
+#' @rdname as_kdata
+as_kdata.sf <- function(x, ...) {
+  # keeps the class `sf` (and the geometry): drawn as a map by default
+  if (ncol(x) == 0L) stop("`data` has no column.", call. = FALSE)
+  attr(x, "kgg_type") <- "sf"
+  x
 }
 
 #' @export

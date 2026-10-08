@@ -20,6 +20,10 @@ kggplot(data, ...)
   alpha = NULL,
   linetype = NULL,
   label = NULL,
+  ymin = NULL,
+  ymax = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   vars = NULL,
   type = NULL,
   title = NULL,
@@ -49,6 +53,12 @@ argument, but \code{width}, \code{bins}, \code{linewidth}, \code{show.legend}...
 \item{x, y, color, fill, group, size, shape, alpha, linetype, label}{Aesthetics,
 see Details. \code{colour} is accepted as an alias of \code{color}.}
 
+\item{ymin, ymax}{Columns holding the lower and upper bounds of a band or of
+error bars, for the types \code{ribbon}, \code{pointrange} and \code{errorbar}.}
+
+\item{xintercept, yintercept}{Column of the position of a reference line, for
+the types \code{vline} and \code{hline} (see \code{\link[=kgg_hline]{kgg_hline()}} and \code{\link[=kgg_vline]{kgg_vline()}}).}
+
 \item{vars}{Optional named list of aesthetics (\code{list(x = "a", y = "b")}),
 an alternative to the arguments above (they take precedence).}
 
@@ -77,11 +87,13 @@ fix level colours), a palette name (\code{\link[=kgg_palettes]{kgg_palettes()}})
 or \code{c(x, y)} to place it inside the panel.}
 
 \item{facet}{Facet variable(s): one name (wrap), two names (row, column
-grid) or a formula.}
+grid) or a formula (\code{panel ~ .} for a column of panels). Layers with their
+own data share the panels, in the same order.}
 
 \item{facet_args}{Named list of extra arguments for
 \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}/\code{\link[ggplot2:facet_grid]{ggplot2::facet_grid()}}, e.g.
-\code{list(scales = "free_y")}.}
+\code{list(scales = "free_y")}. With \code{switch}, the strips are placed outside
+the axes.}
 
 \item{new_data}{For the \code{kggplot} method: data of the new layer (default:
 the data of the first layer).}
@@ -98,11 +110,15 @@ compose it with \code{+}, or convert it with \code{\link[=as_ggplot]{as_ggplot()
 \section{Mapping aesthetics}{
 
 \code{x}, \code{y}, \code{color}, \code{fill}, \code{group}, \code{size}, \code{shape}, \code{alpha}, \code{linetype}
-and \code{label} take column names (strings). Special values:
+and \code{label} take column names (strings). \code{ymin} and \code{ymax} (bands, error
+bars) and \code{xintercept} and \code{yintercept} (reference lines) are columns too.
+Special values:
 \itemize{
 \item \code{y = c("a", "b")} or \code{y = "all"} plots several columns; they are
 stacked in long format and coloured by series (the pseudo-column
-\code{".series"} can be mapped to any aesthetic or facet).
+\code{".series"} can be mapped to any aesthetic or facet). \code{ymin} and \code{ymax}
+then take either one column (used for every series) or one column per
+\code{y} column, in the same order.
 \item a string that is not a column, passed to \code{color}, \code{fill} or
 \code{group}, creates a legend entry: \code{color = "Observed"} names the layer.
 \item \code{I("red")} (or a number, for \code{size}, \code{alpha}...) is a fixed
@@ -134,6 +150,13 @@ kggplot(iris, y = "Sepal.Length", color = "Species", type = "density")
 
 # time series input
 kggplot(AirPassengers, title = "Air passengers", theme = "minimal")
+
+# a band around a line, from ymin / ymax columns
+d <- data.frame(t = 1:20, m = sin(1:20 / 3))
+d$lo <- d$m - 0.2
+d$hi <- d$m + 0.2
+kggplot(d, "t", "m", ymin = "lo", ymax = "hi", type = "ribbon") +
+  kggplot(d, "t", "m", type = "line")
 
 # superpose a second dataset: consistent colours and a shared legend
 obs <- data.frame(t = 1:10, v = cumsum(rep(1, 10)))

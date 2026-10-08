@@ -94,6 +94,16 @@ test_that("every built-in type renders", {
       text = kggplot(d, "Sepal.Length", "Sepal.Width", label = "Species",
                      type = type),
       count = kggplot(d, "Species", type = type),
+      ribbon = , errorbar = , pointrange = {
+        d$lo <- d$Sepal.Width - 0.1
+        d$hi <- d$Sepal.Width + 0.1
+        kggplot(d, "Sepal.Length", "Sepal.Width", ymin = "lo", ymax = "hi",
+                type = type)
+      },
+      hline = kggplot(d, yintercept = "Sepal.Width", type = type),
+      vline = kggplot(d, xintercept = "Sepal.Length", type = type),
+      # needs an sf object, see test-sf.R
+      sf = next,
       kggplot(d, "Sepal.Length", "Sepal.Width", type = type)
     )
     expect_s3_class(render(p)$plot, "ggplot")

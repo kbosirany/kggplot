@@ -8,3 +8,4 @@
 ^\.github$
 ^\.gitlab-ci\.yml$
 ^\.lintr$
+^README\.Rmd$
