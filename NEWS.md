@@ -1,3 +1,5 @@
+# kggplot (development version)
+
 # kggplot 0.2.0
 
 This version draws maps (`sf` objects) and adds plot types and helpers for
