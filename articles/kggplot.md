@@ -103,7 +103,9 @@ kgg_types()
 #>  [1] "point"      "jitter"     "line"       "path"       "step"      
 #>  [6] "area"       "smooth"     "text"       "bar"        "col"       
 #> [11] "bar_dodge"  "count"      "histogram"  "density"    "ecdf"      
-#> [16] "cumFreq"    "boxplot"    "violin"     "convexhull"
+#> [16] "cumFreq"    "boxplot"    "violin"     "ribbon"     "pointrange"
+#> [21] "errorbar"   "hline"      "vline"      "blank"      "sf"        
+#> [26] "convexhull"
 ```
 
 ``` r
@@ -231,6 +233,87 @@ p |>
 ```
 
 ![](kggplot_files/figure-html/modifiers-1.png)
+
+## Bands, error bars, reference lines and panel limits
+
+Four more building blocks make a multi-panel scientific figure possible
+with
+[`kggplot()`](https://kbosirany.github.io/kggplot/reference/kggplot.md)
+and `+` only:
+
+- **`ribbon`** draws a band between the `ymin` and `ymax` columns,
+  filled with the series colour (`alpha = 0.2`, no outline). With
+  several `y` columns, `ymin` and `ymax` take one column per `y`, in the
+  same order (or a single column, shared by every series).
+- **`pointrange`** and **`errorbar`** draw a point and its range, in
+  black and not coloured by series (map `color` to override).
+- **[`kgg_hline()`](https://kbosirany.github.io/kggplot/reference/kgg_reference.md)**
+  and
+  **[`kgg_vline()`](https://kbosirany.github.io/kggplot/reference/kgg_reference.md)**
+  add reference lines. Give the positions as a vector to draw them in
+  every panel, or a data frame holding the facet column to draw them in
+  the matching panels only. Fixed appearance goes in the arguments:
+  `linetype = "dashed"`, `color = I("grey40")`.
+- **[`kgg_limits()`](https://kbosirany.github.io/kggplot/reference/kgg_reference.md)**
+  forces the range of the axes of some panels, which matters with free
+  scales: it draws nothing but trains the scales.
+
+Layers with their own data share the panels of a facet variable, in the
+same order, and a series keeps its colour across layers.
+
+``` r
+
+dates <- seq(as.Date("2024-05-01"), by = "day", length.out = 60)
+panels <- c("LAI", "Available water ratio", "Irrigation")
+simulate <- function(simulation, shift) {
+  lai <- pmax(0, 3 * sin(seq(0, pi, length.out = 60)) + shift)
+  awr <- pmin(1, pmax(0, 0.8 - seq(0, 0.5, length.out = 60) + shift / 10))
+  irr <- ifelse(seq_along(dates) %% 10 == 0, 20 + 5 * shift, 0)
+  data.frame(
+    date = rep(dates, 3), simulation = simulation,
+    panel = factor(rep(panels, each = 60), levels = panels),
+    mean = c(lai, awr, irr), sd = c(rep(0.3, 60), rep(0.08, 60), rep(0, 60))
+  )
+}
+sims <- rbind(simulate("Simulation", 0), simulate("Reference", 0.4))
+sims$lo <- sims$mean - sims$sd
+sims$hi <- sims$mean + sims$sd
+curves <- sims[sims$panel != "Irrigation", ]
+irrigation <- sims[sims$panel == "Irrigation" & sims$mean > 0, ]
+
+obs <- data.frame(
+  date = dates[c(10, 25, 40, 55)], lai = c(0.8, 2.4, 2.6, 1.1),
+  panel = factor("LAI", levels = panels)
+)
+obs$lo <- obs$lai - 0.25
+obs$hi <- obs$lai + 0.25
+threshold <- data.frame(
+  panel = factor("Available water ratio", levels = panels), y = 0.4
+)
+colors <- c(Simulation = "#00a3a6", Reference = "#e07a5f")
+
+kggplot(
+  curves, "date", "mean", ymin = "lo", ymax = "hi", fill = "simulation",
+  type = "ribbon", palette = colors, theme = "inrae", legend = "bottom",
+  facet = panel ~ ., facet_args = list(scales = "free_y", switch = "y"),
+  xlab = NA, ylab = NA, labels = list(color = NA, fill = NA)
+) +
+  kggplot(curves, "date", "mean", color = "simulation", type = "line",
+          linewidth = 0.8) +
+  kggplot(irrigation, "date", "mean", fill = "simulation", type = "bar_dodge",
+          width = 0.9, position = "dodge") +
+  kggplot(obs, "date", "lai", ymin = "lo", ymax = "hi", type = "pointrange") +
+  kgg_hline(data = threshold, yintercept = "y", linetype = "dashed",
+            color = I("grey40")) +
+  kgg_vline(dates[c(15, 30, 45)], linetype = "dotted", color = I("grey60")) +
+  kgg_limits(panel = "Available water ratio", y = c(0, 1))
+```
+
+![](kggplot_files/figure-html/figure-1.png)
+
+A formula such as `panel ~ .` gives a column of panels; `switch = "y"`
+moves the strips to the left and places them outside the axes. `NA`
+removes a title: here the axis titles and the legend title.
 
 ## Going back to ggplot2
 

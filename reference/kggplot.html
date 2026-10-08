@@ -13,7 +13,7 @@ compose it with +, or convert it with as_ggplot()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">kggplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@ compose it with +, or convert it with as_ggplot()."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Draw a complete plot in one call</h1>
-      <small class="dont-index">Source: <a href="https://github.com/kbosirany/kggplot/blob/v0.1.0/R/kggplot.R" class="external-link"><code>R/kggplot.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/kbosirany/kggplot/blob/main/R/kggplot.R" class="external-link"><code>R/kggplot.R</code></a></small>
       <div class="d-none name"><code>kggplot.Rd</code></div>
     </div>
 
@@ -64,6 +64,10 @@ compose it with <code>+</code>, or convert it with <code><a href="as_ggplot.html
 <span>  alpha <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linetype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ymin <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ymax <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xintercept <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  yintercept <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  vars <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -102,6 +106,16 @@ argument, but <code>width</code>, <code>bins</code>, <code>linewidth</code>, <co
 <dt id="arg-x-y-color-fill-group-size-shape-alpha-linetype-label">x, y, color, fill, group, size, shape, alpha, linetype, label<a class="anchor" aria-label="anchor" href="#arg-x-y-color-fill-group-size-shape-alpha-linetype-label"></a></dt>
 <dd><p>Aesthetics,
 see Details. <code>colour</code> is accepted as an alias of <code>color</code>.</p></dd>
+
+
+<dt id="arg-ymin-ymax">ymin, ymax<a class="anchor" aria-label="anchor" href="#arg-ymin-ymax"></a></dt>
+<dd><p>Columns holding the lower and upper bounds of a band or of
+error bars, for the types <code>ribbon</code>, <code>pointrange</code> and <code>errorbar</code>.</p></dd>
+
+
+<dt id="arg-xintercept-yintercept">xintercept, yintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept-yintercept"></a></dt>
+<dd><p>Column of the position of a reference line, for
+the types <code>vline</code> and <code>hline</code> (see <code><a href="kgg_reference.html">kgg_hline()</a></code> and <code><a href="kgg_reference.html">kgg_vline()</a></code>).</p></dd>
 
 
 <dt id="arg-vars">vars<a class="anchor" aria-label="anchor" href="#arg-vars"></a></dt>
@@ -151,13 +165,15 @@ or <code>c(x, y)</code> to place it inside the panel.</p></dd>
 
 <dt id="arg-facet">facet<a class="anchor" aria-label="anchor" href="#arg-facet"></a></dt>
 <dd><p>Facet variable(s): one name (wrap), two names (row, column
-grid) or a formula.</p></dd>
+grid) or a formula (<code>panel ~ .</code> for a column of panels). Layers with their
+own data share the panels, in the same order.</p></dd>
 
 
 <dt id="arg-facet-args">facet_args<a class="anchor" aria-label="anchor" href="#arg-facet-args"></a></dt>
 <dd><p>Named list of extra arguments for
 <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">ggplot2::facet_wrap()</a></code>/<code><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">ggplot2::facet_grid()</a></code>, e.g.
-<code>list(scales = "free_y")</code>.</p></dd>
+<code>list(scales = "free_y")</code>. With <code>switch</code>, the strips are placed outside
+the axes.</p></dd>
 
 
 <dt id="arg-new-data">new_data<a class="anchor" aria-label="anchor" href="#arg-new-data"></a></dt>
@@ -174,9 +190,13 @@ the data of the first layer).</p></dd>
 
 
 <p><code>x</code>, <code>y</code>, <code>color</code>, <code>fill</code>, <code>group</code>, <code>size</code>, <code>shape</code>, <code>alpha</code>, <code>linetype</code>
-and <code>label</code> take column names (strings). Special values:</p><ul><li><p><code>y = c("a", "b")</code> or <code>y = "all"</code> plots several columns; they are
+and <code>label</code> take column names (strings). <code>ymin</code> and <code>ymax</code> (bands, error
+bars) and <code>xintercept</code> and <code>yintercept</code> (reference lines) are columns too.
+Special values:</p><ul><li><p><code>y = c("a", "b")</code> or <code>y = "all"</code> plots several columns; they are
 stacked in long format and coloured by series (the pseudo-column
-<code>".series"</code> can be mapped to any aesthetic or facet).</p></li>
+<code>".series"</code> can be mapped to any aesthetic or facet). <code>ymin</code> and <code>ymax</code>
+then take either one column (used for every series) or one column per
+<code>y</code> column, in the same order.</p></li>
 <li><p>a string that is not a column, passed to <code>color</code>, <code>fill</code> or
 <code>group</code>, creates a legend entry: <code>color = "Observed"</code> names the layer.</p></li>
 <li><p><code>I("red")</code> (or a number, for <code>size</code>, <code>alpha</code>...) is a fixed
@@ -214,12 +234,20 @@ ggplot2 component can be added with <code>+</code> (<code>+ theme(...)</code>, <
 <span class="r-in"><span><span class="fu">kggplot</span><span class="op">(</span><span class="va">AirPassengers</span>, title <span class="op">=</span> <span class="st">"Air passengers"</span>, theme <span class="op">=</span> <span class="st">"minimal"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="kggplot-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># a band around a line, from ymin / ymax columns</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span><span class="op">$</span><span class="va">lo</span> <span class="op">&lt;-</span> <span class="va">d</span><span class="op">$</span><span class="va">m</span> <span class="op">-</span> <span class="fl">0.2</span></span></span>
+<span class="r-in"><span><span class="va">d</span><span class="op">$</span><span class="va">hi</span> <span class="op">&lt;-</span> <span class="va">d</span><span class="op">$</span><span class="va">m</span> <span class="op">+</span> <span class="fl">0.2</span></span></span>
+<span class="r-in"><span><span class="fu">kggplot</span><span class="op">(</span><span class="va">d</span>, <span class="st">"t"</span>, <span class="st">"m"</span>, ymin <span class="op">=</span> <span class="st">"lo"</span>, ymax <span class="op">=</span> <span class="st">"hi"</span>, type <span class="op">=</span> <span class="st">"ribbon"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu">kggplot</span><span class="op">(</span><span class="va">d</span>, <span class="st">"t"</span>, <span class="st">"m"</span>, type <span class="op">=</span> <span class="st">"line"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="kggplot-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># superpose a second dataset: consistent colours and a shared legend</span></span></span>
 <span class="r-in"><span><span class="va">obs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, v <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, v <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1.2</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">kggplot</span><span class="op">(</span><span class="va">obs</span>, <span class="st">"t"</span>, <span class="st">"v"</span>, color <span class="op">=</span> <span class="st">"Observed"</span>, type <span class="op">=</span> <span class="st">"point"</span>, theme <span class="op">=</span> <span class="st">"bw"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu">kggplot</span><span class="op">(</span><span class="va">sim</span>, <span class="st">"t"</span>, <span class="st">"v"</span>, color <span class="op">=</span> <span class="st">"Simulated"</span>, type <span class="op">=</span> <span class="st">"line"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="kggplot-5.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="kggplot-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

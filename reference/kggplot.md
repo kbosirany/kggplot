@@ -24,6 +24,10 @@ kggplot(
   alpha = NULL,
   linetype = NULL,
   label = NULL,
+  ymin = NULL,
+  ymax = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   vars = NULL,
   type = NULL,
   title = NULL,
@@ -62,6 +66,19 @@ kggplot(data, new_data = NULL, ...)
 - x, y, color, fill, group, size, shape, alpha, linetype, label:
 
   Aesthetics, see Details. `colour` is accepted as an alias of `color`.
+
+- ymin, ymax:
+
+  Columns holding the lower and upper bounds of a band or of error bars,
+  for the types `ribbon`, `pointrange` and `errorbar`.
+
+- xintercept, yintercept:
+
+  Column of the position of a reference line, for the types `vline` and
+  `hline` (see
+  [`kgg_hline()`](https://kbosirany.github.io/kggplot/reference/kgg_reference.md)
+  and
+  [`kgg_vline()`](https://kbosirany.github.io/kggplot/reference/kgg_reference.md)).
 
 - vars:
 
@@ -115,13 +132,15 @@ kggplot(data, new_data = NULL, ...)
 - facet:
 
   Facet variable(s): one name (wrap), two names (row, column grid) or a
-  formula.
+  formula (`panel ~ .` for a column of panels). Layers with their own
+  data share the panels, in the same order.
 
 - facet_args:
 
   Named list of extra arguments for
   [`ggplot2::facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html)/[`ggplot2::facet_grid()`](https://ggplot2.tidyverse.org/reference/facet_grid.html),
-  e.g. `list(scales = "free_y")`.
+  e.g. `list(scales = "free_y")`. With `switch`, the strips are placed
+  outside the axes.
 
 - new_data:
 
@@ -135,11 +154,15 @@ An object of class `kggplot`.
 ## Mapping aesthetics
 
 `x`, `y`, `color`, `fill`, `group`, `size`, `shape`, `alpha`, `linetype`
-and `label` take column names (strings). Special values:
+and `label` take column names (strings). `ymin` and `ymax` (bands, error
+bars) and `xintercept` and `yintercept` (reference lines) are columns
+too. Special values:
 
 - `y = c("a", "b")` or `y = "all"` plots several columns; they are
   stacked in long format and coloured by series (the pseudo-column
-  `".series"` can be mapped to any aesthetic or facet).
+  `".series"` can be mapped to any aesthetic or facet). `ymin` and
+  `ymax` then take either one column (used for every series) or one
+  column per `y` column, in the same order.
 
 - a string that is not a column, passed to `color`, `fill` or `group`,
   creates a legend entry: `color = "Observed"` names the layer.
@@ -178,6 +201,14 @@ kggplot(iris, y = "Sepal.Length", color = "Species", type = "density")
 
 # time series input
 kggplot(AirPassengers, title = "Air passengers", theme = "minimal")
+
+
+# a band around a line, from ymin / ymax columns
+d <- data.frame(t = 1:20, m = sin(1:20 / 3))
+d$lo <- d$m - 0.2
+d$hi <- d$m + 0.2
+kggplot(d, "t", "m", ymin = "lo", ymax = "hi", type = "ribbon") +
+  kggplot(d, "t", "m", type = "line")
 
 
 # superpose a second dataset: consistent colours and a shared legend

@@ -1,5 +1,45 @@
 # Changelog
 
+## kggplot 0.2.0
+
+This version draws maps (`sf` objects) and adds plot types and helpers
+for bands, reference lines and forced axis limits.
+
+- `sf` objects are supported: the geometry is kept
+  ([`as_kdata.sf()`](https://kbosirany.github.io/kggplot/reference/as_kdata.md))
+  and the new plot type `sf` draws a map
+  (`kggplot(sf, fill = "column")`), also with facets and discrete fills.
+
+- New plot types: `ribbon` (band between `ymin` and `ymax`),
+  `pointrange` and `errorbar` (black, not coloured by series), `hline`
+  and `vline` (reference lines) and `blank` (trains the scales). `ymin`,
+  `ymax`, `xintercept` and `yintercept` are new aesthetics; with several
+  `y` columns, `ymin` and `ymax` are stacked with them (one column per
+  `y`, or one shared column).
+
+- New helpers
+  [`kgg_hline()`](https://kbosirany.github.io/kggplot/reference/kgg_reference.md),
+  [`kgg_vline()`](https://kbosirany.github.io/kggplot/reference/kgg_reference.md)
+  and
+  [`kgg_limits()`](https://kbosirany.github.io/kggplot/reference/kgg_reference.md):
+  reference lines in every panel or in the panels of a data frame only,
+  and forced axis limits for some panels with free scales
+  ([\#7](https://github.com/kbosirany/kggplot/issues/7)).
+
+- Layers with their own data now share the panels of a facet variable,
+  in the same order, whatever the type (factor or character) of the
+  column.
+
+- `switch` in `facet_args` places the strips outside the axes.
+
+- [`kgg_register_type()`](https://kbosirany.github.io/kggplot/reference/kgg_register_type.md)
+  gains `series = "none"`, `free` and `intercept`; the defaults of a
+  type (e.g. the black colour of `pointrange`) give way to an aesthetic
+  the user maps.
+
+- Fix: positional aesthetics are matched exactly (`x` no longer matches
+  `xintercept`).
+
 ## kggplot 0.1.0
 
 - First version, extracted from kplot (its ggplot2 part) and refactored.

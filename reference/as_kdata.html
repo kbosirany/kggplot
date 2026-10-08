@@ -15,7 +15,7 @@ are only used when the call does not specify x, y or type."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">kggplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@ are only used when the call does not specify x, y or type."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Convert an input object to a data frame for kggplot</h1>
-      <small class="dont-index">Source: <a href="https://github.com/kbosirany/kggplot/blob/v0.1.0/R/as_kdata.R" class="external-link"><code>R/as_kdata.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/kbosirany/kggplot/blob/main/R/as_kdata.R" class="external-link"><code>R/as_kdata.R</code></a></small>
       <div class="d-none name"><code>as_kdata.Rd</code></div>
     </div>
 
@@ -55,6 +55,9 @@ are only used when the call does not specify <code>x</code>, <code>y</code> or <
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">as_kdata</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'data.frame'</span></span>
+<span><span class="fu">as_kdata</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'sf'</span></span>
 <span><span class="fu">as_kdata</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'ts'</span></span>
@@ -100,7 +103,8 @@ are only used when the call does not specify <code>x</code>, <code>y</code> or <
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Built-in methods: <code>data.frame</code> (and tibbles), <code>ts</code>/<code>mts</code>, <code>matrix</code>, atomic
+    <p>Built-in methods: <code>data.frame</code> (and tibbles), <code>sf</code> (a map: the geometry is
+kept and <code>fill</code> colours the polygons), <code>ts</code>/<code>mts</code>, <code>matrix</code>, atomic
 vectors (numeric, character, factor, logical), <code>list</code> of equal-length
 vectors.</p>
     </div>
