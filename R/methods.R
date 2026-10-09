@@ -44,3 +44,6 @@ autoplot.kggplot <- function(object, ...) as_ggplot(object)
 # Without this, `kggplot + theme_bw()` is ambiguous with ggplot2's `+.gg`
 #' @exportS3Method base::chooseOpsMethod
 chooseOpsMethod.kggplot <- function(x, y, mx, my, cl, reverse) TRUE
+
+#' @exportS3Method base::chooseOpsMethod
+chooseOpsMethod.kgg_grid <- function(x, y, mx, my, cl, reverse) TRUE

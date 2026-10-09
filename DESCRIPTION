@@ -1,7 +1,7 @@
 Package: kggplot
 Type: Package
 Title: Concise, Composable 'ggplot2' Plots from a Single Call
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(
     person(
       given = c("Kevin", "Bosirany"),
@@ -25,6 +25,7 @@ Depends:
 Imports:
     ggplot2 (>= 3.4.0),
     grDevices,
+    patchwork,
     rlang,
     stats,
     utils
@@ -40,3 +41,4 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.1.0
+RoxygenNote: 7.3.1
