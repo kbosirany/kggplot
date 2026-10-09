@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/kbosirany/kggplot/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/kbosirany/kggplot/blob/v0.3.0/DESCRIPTION)
 
 Orlando KB (2026). *kggplot: Concise, Composable 'ggplot2' Plots from a
 Single Call*. R package version 0.3.0,
