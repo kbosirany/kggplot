@@ -1,6 +1,8 @@
 # Changelog
 
-## kggplot (development version)
+## kggplot 0.3.0
+
+This version adds grids: several plots composed in one figure.
 
 - New
   [`kgg_grid()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_grid.md)
