@@ -1,7 +1,7 @@
 Package: kggplot
 Type: Package
 Title: Concise, Composable 'ggplot2' Plots from a Single Call
-Version: 0.3.0
+Version: 0.3.0.9000
 Authors@R: c(
     person(
       given = c("Kevin", "Bosirany"),
