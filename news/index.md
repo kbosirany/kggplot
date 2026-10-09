@@ -1,5 +1,19 @@
 # Changelog
 
+## kggplot 0.3.0
+
+This version adds grids: several plots composed in one figure.
+
+- New
+  [`kgg_grid()`](https://kbosirany.github.io/kggplot/reference/kgg_grid.md)
+  composes kggplot, ggplot and nested lists of plots into a grid (via
+  ‘patchwork’). The layout is as square as possible by default
+  ([`kgg_grid_dims()`](https://kbosirany.github.io/kggplot/reference/kgg_grid_dims.md)),
+  can be forced with `nrow`/`ncol` (checked: too-small grids are an
+  error, empty rows or columns a warning), identical legends are merged
+  into one (`legend = "collect"`), and titles, tags, widths and heights
+  are supported.
+
 ## kggplot 0.2.0
 
 This version draws maps (`sf` objects) and adds plot types and helpers

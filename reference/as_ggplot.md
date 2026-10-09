@@ -17,6 +17,9 @@ as_ggplot(x, ...)
 
 # S3 method for class 'kggplot'
 as_ggplot(x, ...)
+
+# S3 method for class 'kgg_grid'
+as_ggplot(x, ...)
 ```
 
 ## Arguments

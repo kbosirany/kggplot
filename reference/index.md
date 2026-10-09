@@ -8,6 +8,10 @@
   : Convert an input object to a data frame for kggplot
 - [`get_color_palette()`](https://kbosirany.github.io/kggplot/reference/get_color_palette.md)
   : Generate a colour palette for a vector of values
+- [`kgg_grid()`](https://kbosirany.github.io/kggplot/reference/kgg_grid.md)
+  : Compose plots into a grid
+- [`kgg_grid_dims()`](https://kbosirany.github.io/kggplot/reference/kgg_grid_dims.md)
+  : Number of rows and columns of a grid
 - [`kgg_add()`](https://kbosirany.github.io/kggplot/reference/kgg_modify.md)
   [`kgg_labs()`](https://kbosirany.github.io/kggplot/reference/kgg_modify.md)
   [`kgg_theme()`](https://kbosirany.github.io/kggplot/reference/kgg_modify.md)
