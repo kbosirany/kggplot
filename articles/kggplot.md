@@ -331,6 +331,23 @@ kgg_grid(Sepal = a, Petal = b, a, b, title = "Iris", tags = "A")
 
 ![](kggplot_files/figure-html/grid-1.png)
 
+Scales are shared across the plots (`scales = "shared"`): a level keeps
+the same colour in every plot even when the plots do not have the same
+levels, so the merged legend is accurate. Use `scales = "free"` to keep
+each plot’s own scales.
+
+``` r
+
+kgg_grid(
+  kggplot(iris[iris$Species != "setosa", ], "Sepal.Length", "Sepal.Width",
+          color = "Species"),
+  kggplot(iris[iris$Species != "virginica", ], "Petal.Length", "Petal.Width",
+          color = "Species")
+)
+```
+
+![](kggplot_files/figure-html/shared-1.png)
+
 [`kgg_grid_dims()`](https://kbosirany.github.io/kggplot/reference/kgg_grid_dims.md)
 shows the chosen layout. Force it with `nrow` and `ncol`: the plots must
 fit in the grid (error otherwise), and empty rows or columns trigger a

@@ -1,5 +1,17 @@
 # Changelog
 
+## kggplot 0.3.1
+
+This version improves
+[`kgg_grid()`](https://kbosirany.github.io/kggplot/reference/kgg_grid.md):
+scales are now shared across the plots.
+
+- [`kgg_grid()`](https://kbosirany.github.io/kggplot/reference/kgg_grid.md)
+  gains `scales = "shared"` (default): a level has the same colour in
+  every plot of the grid and continuous colour/fill scales share their
+  limits, so the merged legend is accurate, as in a facet. Use
+  `scales = "free"` for the previous behaviour.
+
 ## kggplot 0.3.0
 
 This version adds grids: several plots composed in one figure.

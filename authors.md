@@ -8,16 +8,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/kbosirany/kggplot/blob/v0.3.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/kbosirany/kggplot/blob/main/DESCRIPTION)
 
 Orlando KB (2026). *kggplot: Concise, Composable 'ggplot2' Plots from a
-Single Call*. R package version 0.3.0,
+Single Call*. R package version 0.3.1,
 <https://github.com/kbosirany/kggplot>.
 
     @Manual{,
       title = {kggplot: Concise, Composable 'ggplot2' Plots from a Single Call},
       author = {Kevin Bosirany Orlando},
       year = {2026},
-      note = {R package version 0.3.0},
+      note = {R package version 0.3.1},
       url = {https://github.com/kbosirany/kggplot},
     }

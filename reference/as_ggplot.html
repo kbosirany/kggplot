@@ -13,7 +13,7 @@ implicitly."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">kggplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@ implicitly."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Convert to a ggplot2 object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/kbosirany/kggplot/blob/v0.3.0/R/build.R" class="external-link"><code>R/build.R</code></a>, <a href="https://github.com/kbosirany/kggplot/blob/v0.3.0/R/grid.R" class="external-link"><code>R/grid.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/kbosirany/kggplot/blob/main/R/build.R" class="external-link"><code>R/build.R</code></a>, <a href="https://github.com/kbosirany/kggplot/blob/main/R/grid.R" class="external-link"><code>R/grid.R</code></a></small>
       <div class="d-none name"><code>as_ggplot.Rd</code></div>
     </div>
 
@@ -55,7 +55,7 @@ implicitly.</p>
 <span><span class="fu">as_ggplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'kggplot'</span></span>
-<span><span class="fu">as_ggplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">as_ggplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, shared <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'kgg_grid'</span></span>
 <span><span class="fu">as_ggplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
@@ -66,11 +66,16 @@ implicitly.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A <code>kggplot</code> (or a <code>ggplot</code>, returned unchanged).</p></dd>
+<dd><p>A <code>kggplot</code>, a <code>kgg_grid</code> or a <code>ggplot</code> (returned unchanged).</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Unused.</p></dd>
+
+
+<dt id="arg-shared">shared<a class="anchor" aria-label="anchor" href="#arg-shared"></a></dt>
+<dd><p>Colour and fill levels or limits imposed on a <code>kggplot</code>.
+Used by <code><a href="kgg_grid.html">kgg_grid()</a></code> to share scales across plots; leave it <code>NULL</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -17,6 +17,7 @@ kgg_grid(
   ncol = NULL,
   ratio = 1,
   byrow = TRUE,
+  scales = c("shared", "free"),
   legend = c("collect", "each", "none"),
   legend_position = c("right", "bottom", "left", "top"),
   titles = NULL,
@@ -53,6 +54,14 @@ kgg_grid(
 - byrow:
 
   Fill the grid by row (`TRUE`, default) or by column.
+
+- scales:
+
+  `"shared"` (default) gives the same colour to the same level in every
+  plot and the same colour limits to continuous colour/fill scales, so a
+  legend merged across plots is truthful (as in a facet). `"free"` keeps
+  the scales of each plot. Only `kggplot` objects are unified: plain
+  `ggplot` objects and nested grids are left untouched.
 
 - legend:
 
