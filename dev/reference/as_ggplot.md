@@ -16,7 +16,7 @@ as_ggplot(x, ...)
 as_ggplot(x, ...)
 
 # S3 method for class 'kggplot'
-as_ggplot(x, ...)
+as_ggplot(x, ..., shared = NULL)
 
 # S3 method for class 'kgg_grid'
 as_ggplot(x, ...)
@@ -26,11 +26,17 @@ as_ggplot(x, ...)
 
 - x:
 
-  A `kggplot` (or a `ggplot`, returned unchanged).
+  A `kggplot`, a `kgg_grid` or a `ggplot` (returned unchanged).
 
 - ...:
 
   Unused.
+
+- shared:
+
+  Colour and fill levels or limits imposed on a `kggplot`. Used by
+  [`kgg_grid()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_grid.md)
+  to share scales across plots; leave it `NULL`.
 
 ## Value
 
