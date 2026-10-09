@@ -27,6 +27,7 @@ Imports:
     grDevices,
     patchwork,
     rlang,
+    scales,
     stats,
     utils
 Suggests:

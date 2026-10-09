@@ -11,7 +11,7 @@ as_ggplot(x, ...)
 
 \method{as_ggplot}{ggplot}(x, ...)
 
-\method{as_ggplot}{kggplot}(x, ...)
+\method{as_ggplot}{kggplot}(x, ..., shared = NULL)
 
 \method{as_ggplot}{kgg_grid}(x, ...)
 }
