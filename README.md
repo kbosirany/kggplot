@@ -49,10 +49,15 @@ sim <- data.frame(t = 1:10, v = cumsum(rep(1.2, 10)))
 
 kggplot(obs, "t", "v", color = "Observed", type = "point") +
   kggplot(sim, "t", "v", color = "Simulated", type = "line")
+
+# Several plots in one grid: square layout, a single shared legend
+a <- kggplot(iris, "Sepal.Length", "Sepal.Width", color = "Species")
+b <- kggplot(iris, "Petal.Length", "Petal.Width", color = "Species")
+kgg_grid(a, b, a, b, title = "Iris", tags = "A")
 ```
 
 See `vignette("kggplot")` (“Get started”) for the full tour: input data,
-plot types, titles, themes and palettes, facets, composing plots, and
+plot types, titles, themes and palettes, facets, composing plots, grids, and
 extending kggplot with your own input classes, plot types and themes.
 
 Branch, version and release conventions are those of
