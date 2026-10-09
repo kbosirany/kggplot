@@ -1,7 +1,7 @@
 Package: kggplot
 Type: Package
 Title: Concise, Composable 'ggplot2' Plots from a Single Call
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: c(
     person(
       given = c("Kevin", "Bosirany"),
@@ -27,6 +27,7 @@ Imports:
     grDevices,
     patchwork,
     rlang,
+    scales,
     stats,
     utils
 Suggests:

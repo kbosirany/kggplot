@@ -16,6 +16,11 @@
 #' @param ratio Target width/height ratio of the grid when `nrow` and `ncol`
 #'   are not given (1 = square, 16/9 = wide).
 #' @param byrow Fill the grid by row (`TRUE`, default) or by column.
+#' @param scales `"shared"` (default) gives the same colour to the same level
+#'   in every plot and the same colour limits to continuous colour/fill
+#'   scales, so a legend merged across plots is truthful (as in a facet).
+#'   `"free"` keeps the scales of each plot. Only `kggplot` objects are
+#'   unified: plain `ggplot` objects and nested grids are left untouched.
 #' @param legend `"collect"` (default) merges the legends of all plots into
 #'   one shared legend, `"each"` keeps one legend per plot, `"none"` removes
 #'   every legend.
@@ -42,11 +47,13 @@
 #'
 #' @export
 kgg_grid <- function(..., nrow = NULL, ncol = NULL, ratio = 1, byrow = TRUE,
+                     scales = c("shared", "free"),
                      legend = c("collect", "each", "none"),
                      legend_position = c("right", "bottom", "left", "top"),
                      titles = NULL, title = NULL, subtitle = NULL,
                      caption = NULL, tags = NULL, widths = NULL,
                      heights = NULL, strict = FALSE) {
+  scales <- match.arg(scales)
   legend <- match.arg(legend)
   legend_position <- match.arg(legend_position)
   plots <- flatten_plots(list(...))
@@ -58,7 +65,8 @@ kgg_grid <- function(..., nrow = NULL, ncol = NULL, ratio = 1, byrow = TRUE,
     list(
       plots = plots, nrow = dims$nrow, ncol = dims$ncol, byrow = byrow,
       dims_args = dims_args,
-      legend = legend, legend_position = legend_position, titles = titles,
+      scales = scales, legend = legend, legend_position = legend_position,
+      titles = titles,
       annotation = list(title = title, subtitle = subtitle, caption = caption),
       tags = tags, widths = widths, heights = heights
     ),
@@ -180,8 +188,14 @@ as_ggplot.kgg_grid <- function(x, ...) {
   rlang::check_installed("patchwork", reason = "to draw grids.")
   nms <- names(x$plots) %||% rep("", length(x$plots))
   use_titles <- x$titles %||% any(nzchar(nms))
+  shared <- if (x$scales == "shared") shared_scales(x$plots)
   plots <- lapply(seq_along(x$plots), function(i) {
-    p <- as_ggplot(x$plots[[i]])
+    el <- x$plots[[i]]
+    p <- if (inherits(el, "kggplot")) {
+      as_ggplot(el, shared = shared)
+    } else {
+      as_ggplot(el)
+    }
     if (use_titles && nzchar(nms[i])) p <- p + ggplot2::ggtitle(nms[i])
     if (x$legend == "none") p <- p + ggplot2::theme(legend.position = "none")
     p
@@ -226,4 +240,23 @@ autoplot.kgg_grid <- function(object, ...) as_ggplot(object)
   e1$nrow <- d$nrow
   e1$ncol <- d$ncol
   e1
+}
+
+# Levels (discrete) or range (continuous) of the colour and fill aesthetics
+# over all the kggplot objects of a grid. An aesthetic that is discrete in
+# some plots and continuous in others is not shared.
+shared_scales <- function(plots) {
+  res <- unlist(
+    lapply(Filter(function(p) inherits(p, "kggplot"), plots), resolve_layers),
+    recursive = FALSE
+  )
+  out <- lapply(c(colour = "colour", fill = "fill"), function(a) {
+    vals <- Filter(Negate(is.null), lapply(res, function(r) r$data[[a]]))
+    if (!length(vals)) return(NULL)
+    num <- vapply(vals, is.numeric, logical(1))
+    if (all(num)) return(list(limits = range(unlist(vals), na.rm = TRUE)))
+    if (!any(num)) return(list(levels = level_union(vals)))
+    NULL
+  })
+  Filter(Negate(is.null), out)
 }

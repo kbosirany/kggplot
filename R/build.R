@@ -5,8 +5,10 @@
 #' or save with [ggplot2::ggsave()]. Printing a kggplot does this
 #' implicitly.
 #'
-#' @param x A `kggplot` (or a `ggplot`, returned unchanged).
+#' @param x A `kggplot`, a `kgg_grid` or a `ggplot` (returned unchanged).
 #' @param ... Unused.
+#' @param shared Colour and fill levels or limits imposed on a `kggplot`.
+#'   Used by [kgg_grid()] to share scales across plots; leave it `NULL`.
 #'
 #' @return A `ggplot` object.
 #'
@@ -26,15 +28,15 @@ as_ggplot.ggplot <- function(x, ...) x
 
 #' @export
 #' @rdname as_ggplot
-as_ggplot.kggplot <- function(x, ...) {
-  fvars <- facet_vars(x$facet)
-  res <- harmonise_facets(lapply(x$layers, resolve_layer, keep = fvars), fvars)
+as_ggplot.kggplot <- function(x, ..., shared = NULL) {
+  res <- resolve_layers(x)
 
   p <- ggplot2::ggplot()
   for (r in res) p <- p + make_geom(r)
 
   theme <- resolve_theme(x$theme, x$base_size)
-  p <- add_color_scales(p, res, resolve_palette(x$palette %||% theme$palette))
+  pal <- resolve_palette(x$palette %||% theme$palette)
+  p <- add_color_scales(p, res, pal, shared)
   p <- p + build_labs(res, x$labels)
   if (!is.null(theme$theme)) p <- p + theme$theme
   p <- add_legend(p, x$legend)
@@ -44,35 +46,66 @@ as_ggplot.kggplot <- function(x, ...) {
   p
 }
 
+# Standardised long data of every layer, facet variables kept and harmonised
+resolve_layers <- function(x) {
+  fvars <- facet_vars(x$facet)
+  harmonise_facets(lapply(x$layers, resolve_layer, keep = fvars), fvars)
+}
+
 # Discrete colour/fill scales share one palette across layers, so a level has
-# the same colour whatever layer it comes from.
-add_color_scales <- function(p, res, pal) {
-  if (is.null(pal)) return(p)
+# the same colour whatever layer it comes from. `shared` (see
+# `shared_scales()`) imposes the levels or limits of a whole grid instead.
+add_color_scales <- function(p, res, pal, shared = NULL) {
   for (a in c("colour", "fill")) {
     vals <- Filter(Negate(is.null), lapply(res, function(r) r$data[[a]]))
-    if (length(vals)) p <- p + color_scale(a, vals, pal)
+    sh <- shared[[a]]
+    if (!length(vals) || (is.null(pal) && is.null(sh))) next
+    p <- p + color_scale(a, vals, pal, sh)
   }
   p
 }
 
-color_scale <- function(aesthetic, vals, pal) {
+color_scale <- function(aesthetic, vals, pal, shared = NULL) {
   if (all(vapply(vals, is.numeric, logical(1)))) {
-    cols <- if (is.function(pal)) pal(7L) else unname(pal)
-    return(switch(
-      aesthetic,
-      colour = ggplot2::scale_colour_gradientn(colours = cols),
-      fill = ggplot2::scale_fill_gradientn(colours = cols)
-    ))
+    return(continuous_scale(aesthetic, pal, shared$limits))
   }
-  lv <- unique(unlist(lapply(
+  lv <- shared$levels %||% level_union(vals)
+  values <- palette_values(pal %||% hue_palette, lv)
+  args <- list(values = values)
+  if (!is.null(shared)) args <- c(args, list(limits = lv, drop = FALSE))
+  fun <- switch(
+    aesthetic,
+    colour = ggplot2::scale_colour_manual,
+    fill = ggplot2::scale_fill_manual
+  )
+  do.call(fun, args)
+}
+
+continuous_scale <- function(aesthetic, pal, limits) {
+  if (is.null(pal)) {
+    fun <- switch(
+      aesthetic,
+      colour = ggplot2::scale_colour_gradient,
+      fill = ggplot2::scale_fill_gradient
+    )
+    return(fun(limits = limits))
+  }
+  cols <- if (is.function(pal)) pal(7L) else unname(pal)
+  fun <- switch(
+    aesthetic,
+    colour = ggplot2::scale_colour_gradientn,
+    fill = ggplot2::scale_fill_gradientn
+  )
+  fun(colours = cols, limits = limits)
+}
+
+# Default ggplot2 hue colours, used when a grid shares scales without palette
+hue_palette <- function(n) scales::hue_pal()(n)
+
+level_union <- function(vals) {
+  unique(unlist(lapply(
     vals, function(v) if (is.factor(v)) levels(v) else unique(as.character(v))
   )))
-  values <- palette_values(pal, lv)
-  switch(
-    aesthetic,
-    colour = ggplot2::scale_colour_manual(values = values),
-    fill = ggplot2::scale_fill_manual(values = values)
-  )
 }
 
 # Default titles come from the layers (first one wins), then user titles

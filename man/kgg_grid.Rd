@@ -10,6 +10,7 @@ kgg_grid(
   ncol = NULL,
   ratio = 1,
   byrow = TRUE,
+  scales = c("shared", "free"),
   legend = c("collect", "each", "none"),
   legend_position = c("right", "bottom", "left", "top"),
   titles = NULL,
@@ -36,6 +37,12 @@ when \code{strict = TRUE}).}
 are not given (1 = square, 16/9 = wide).}
 
 \item{byrow}{Fill the grid by row (\code{TRUE}, default) or by column.}
+
+\item{scales}{\code{"shared"} (default) gives the same colour to the same level
+in every plot and the same colour limits to continuous colour/fill
+scales, so a legend merged across plots is truthful (as in a facet).
+\code{"free"} keeps the scales of each plot. Only \code{kggplot} objects are
+unified: plain \code{ggplot} objects and nested grids are left untouched.}
 
 \item{legend}{\code{"collect"} (default) merges the legends of all plots into
 one shared legend, \code{"each"} keeps one legend per plot, \code{"none"} removes

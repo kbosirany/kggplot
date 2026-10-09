@@ -97,3 +97,65 @@ test_that("named plots get a title and the grid can grow with +", {
 test_that("a kggplot is not confused with ggplot2 on +", {
   expect_s3_class(kgg_grid(p1, p2) + list(p1), "kgg_grid")
 })
+
+# Colour mapped to each level in a built plot
+level_colours <- function(g) {
+  b <- ggplot2::ggplot_build(g)
+  s <- b$plot$scales$get_scales("colour")
+  lv <- s$get_limits()
+  stats::setNames(s$map(lv), lv)
+}
+
+d <- data.frame(
+  x = 1:6, y = 1:6, g = c("a", "b", "c", "b", "c", "d"),
+  z = c(1, 5, 10, 2, 3, 4)
+)
+q1 <- kggplot(d[d$g %in% c("a", "b", "c"), ], "x", "y", color = "g")
+q2 <- kggplot(d[d$g %in% c("b", "c", "d"), ], "x", "y", color = "g")
+
+test_that("shared scales give a level the same colour in every plot", {
+  free <- as_ggplot(kgg_grid(q1, q2, scales = "free"))
+  expect_false(
+    level_colours(free$patches$plots[[1]])[["b"]] ==
+      level_colours(free[[2]])[["b"]]
+  )
+  g <- as_ggplot(kgg_grid(q1, q2))
+  c1 <- level_colours(g$patches$plots[[1]])
+  c2 <- level_colours(g[[2]])
+  expect_equal(names(c1), c("a", "b", "c", "d"))
+  expect_equal(c1, c2)
+  expect_equal(n_legends(g), 1)
+})
+
+test_that("shared scales work with a palette and with factors", {
+  p1 <- kggplot(d[1:3, ], "x", "y", color = "g", palette = c("red", "blue"))
+  p2 <- kggplot(d[4:6, ], "x", "y", color = "g", palette = c("red", "blue"))
+  g <- as_ggplot(kgg_grid(p1, p2))
+  expect_equal(
+    level_colours(g$patches$plots[[1]])[c("b", "c")],
+    level_colours(g[[2]])[c("b", "c")]
+  )
+})
+
+test_that("continuous colours share their limits", {
+  r1 <- kggplot(d[1:3, ], "x", "y", color = "z")
+  r2 <- kggplot(d[4:6, ], "x", "y", color = "z")
+  g <- as_ggplot(kgg_grid(r1, r2))
+  lim <- function(p) {
+    ggplot2::ggplot_build(p)$plot$scales$get_scales("colour")$get_limits()
+  }
+  expect_equal(lim(g$patches$plots[[1]]), c(1, 10))
+  expect_equal(lim(g[[2]]), c(1, 10))
+  expect_no_error(ggplot2::ggplot_build(g))
+})
+
+test_that("mixed or absent aesthetics and ggplot inputs are left alone", {
+  none <- kggplot(d, "x", "y")
+  expect_no_error(ggplot2::ggplot_build(as_ggplot(kgg_grid(none, q1))))
+  mixed <- kggplot(d, "x", "y", color = "z")
+  expect_no_error(ggplot2::ggplot_build(as_ggplot(kgg_grid(mixed, q1))))
+  expect_no_error(
+    ggplot2::ggplot_build(as_ggplot(kgg_grid(as_ggplot(q1), q2)))
+  )
+  expect_error(kgg_grid(q1, scales = "x"))
+})
