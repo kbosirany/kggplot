@@ -1,4 +1,6 @@
-# kggplot (development version)
+# kggplot 0.3.0
+
+This version adds grids: several plots composed in one figure.
 
 * New `kgg_grid()` composes kggplot, ggplot and nested lists of plots into a
   grid (via 'patchwork'). The layout is as square as possible by default
