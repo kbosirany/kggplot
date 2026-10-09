@@ -1,4 +1,6 @@
-# kggplot (development version)
+# kggplot 0.3.1
+
+This version improves `kgg_grid()`: scales are now shared across the plots.
 
 # kggplot 0.3.0
 
