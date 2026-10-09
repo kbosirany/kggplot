@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">kggplot</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.3.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,8 +34,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="kggplot-development-version">kggplot (development version)<a class="anchor" aria-label="anchor" href="#kggplot-development-version"></a></h2>
-</div>
+<h2 class="pkg-version" data-toc-text="0.3.1" id="kggplot-031">kggplot 0.3.1<a class="anchor" aria-label="anchor" href="#kggplot-031"></a></h2>
+<p>This version improves <code><a href="../reference/kgg_grid.html">kgg_grid()</a></code>: scales are now shared across the plots.</p>
+<ul><li>
+<code><a href="../reference/kgg_grid.html">kgg_grid()</a></code> gains <code>scales = "shared"</code> (default): a level has the same colour in every plot of the grid and continuous colour/fill scales share their limits, so the merged legend is accurate, as in a facet. Use <code>scales = "free"</code> for the previous behaviour.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="kggplot-030">kggplot 0.3.0<a class="anchor" aria-label="anchor" href="#kggplot-030"></a></h2>
 <p>This version adds grids: several plots composed in one figure.</p>
