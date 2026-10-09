@@ -11,13 +11,13 @@ Source:
 [`DESCRIPTION`](https://github.com/kbosirany/kggplot/blob/dev/DESCRIPTION)
 
 Orlando KB (2026). *kggplot: Concise, Composable 'ggplot2' Plots from a
-Single Call*. R package version 0.2.0,
+Single Call*. R package version 0.2.0.9000,
 <https://github.com/kbosirany/kggplot>.
 
     @Manual{,
       title = {kggplot: Concise, Composable 'ggplot2' Plots from a Single Call},
       author = {Kevin Bosirany Orlando},
       year = {2026},
-      note = {R package version 0.2.0},
+      note = {R package version 0.2.0.9000},
       url = {https://github.com/kbosirany/kggplot},
     }

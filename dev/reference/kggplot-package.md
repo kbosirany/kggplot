@@ -19,8 +19,3 @@ Useful links:
 
 **Maintainer**: Kevin Bosirany Orlando <kevinbosirany@gmail.com>
 ([ORCID](https://orcid.org/0009-0009-2784-3108))
-
-Authors:
-
-- Kevin Bosirany Orlando <kevinbosirany@gmail.com>
-  ([ORCID](https://orcid.org/0009-0009-2784-3108))

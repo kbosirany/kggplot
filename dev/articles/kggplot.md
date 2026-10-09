@@ -315,6 +315,43 @@ A formula such as `panel ~ .` gives a column of panels; `switch = "y"`
 moves the strips to the left and places them outside the axes. `NA`
 removes a title: here the axis titles and the legend title.
 
+## Grids of plots
+
+[`kgg_grid()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_grid.md)
+puts several plots in a grid. Pass them one by one or in lists. The grid
+is as square as possible by default, and identical legends are merged
+into a single one, as in a facet.
+
+``` r
+
+a <- kggplot(iris, "Sepal.Length", "Sepal.Width", color = "Species")
+b <- kggplot(iris, "Petal.Length", "Petal.Width", color = "Species")
+kgg_grid(Sepal = a, Petal = b, a, b, title = "Iris", tags = "A")
+```
+
+![](kggplot_files/figure-html/grid-1.png)
+
+[`kgg_grid_dims()`](https://kbosirany.github.io/kggplot/dev/reference/kgg_grid_dims.md)
+shows the chosen layout. Force it with `nrow` and `ncol`: the plots must
+fit in the grid (error otherwise), and empty rows or columns trigger a
+warning.
+
+``` r
+
+kgg_grid_dims(7)
+#> $nrow
+#> [1] 3
+#> 
+#> $ncol
+#> [1] 3
+kgg_grid_dims(5, ncol = 2)
+#> $nrow
+#> [1] 3
+#> 
+#> $ncol
+#> [1] 2
+```
+
 ## Going back to ggplot2
 
 [`as_ggplot()`](https://kbosirany.github.io/kggplot/dev/reference/as_ggplot.md)
