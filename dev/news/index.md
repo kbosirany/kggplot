@@ -1,5 +1,7 @@
 # Changelog
 
+## kggplot (development version)
+
 ## kggplot 0.3.0
 
 This version adds grids: several plots composed in one figure.
