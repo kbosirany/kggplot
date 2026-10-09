@@ -2,6 +2,13 @@
 output: github_document
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.path = "man/figures/README-",
+  out.width = "70%", dpi = 100, message = FALSE
+)
+```
+
 <!-- README.md is generated from README.Rmd. Please edit that file,
 then run devtools::build_readme(). -->
 
@@ -51,7 +58,7 @@ pak::pak("kbosirany/kggplot")
 
 ## Example
 
-```r
+```{r example, fig.height = 4}
 library(kggplot)
 
 kggplot(iris, "Sepal.Length", "Sepal.Width", color = "Species",
