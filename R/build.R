@@ -5,8 +5,10 @@
 #' or save with [ggplot2::ggsave()]. Printing a kggplot does this
 #' implicitly.
 #'
-#' @param x A `kggplot` (or a `ggplot`, returned unchanged).
+#' @param x A `kggplot`, a `kgg_grid` or a `ggplot` (returned unchanged).
 #' @param ... Unused.
+#' @param shared Colour and fill levels or limits imposed on a `kggplot`.
+#'   Used by [kgg_grid()] to share scales across plots; leave it `NULL`.
 #'
 #' @return A `ggplot` object.
 #'
