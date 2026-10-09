@@ -1,5 +1,12 @@
 # kggplot (development version)
 
+* New `kgg_grid()` composes kggplot, ggplot and nested lists of plots into a
+  grid (via 'patchwork'). The layout is as square as possible by default
+  (`kgg_grid_dims()`), can be forced with `nrow`/`ncol` (checked: too-small
+  grids are an error, empty rows or columns a warning), identical legends are
+  merged into one (`legend = "collect"`), and titles, tags, widths and heights
+  are supported.
+
 # kggplot 0.2.0
 
 This version draws maps (`sf` objects) and adds plot types and helpers for

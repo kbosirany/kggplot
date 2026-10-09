@@ -19,10 +19,5 @@ Useful links:
 \author{
 \strong{Maintainer}: Kevin Bosirany Orlando \email{kevinbosirany@gmail.com} (\href{https://orcid.org/0009-0009-2784-3108}{ORCID})
 
-Authors:
-\itemize{
-  \item Kevin Bosirany Orlando \email{kevinbosirany@gmail.com} (\href{https://orcid.org/0009-0009-2784-3108}{ORCID})
-}
-
 }
 \keyword{internal}
