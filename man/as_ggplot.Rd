@@ -11,14 +11,17 @@ as_ggplot(x, ...)
 
 \method{as_ggplot}{ggplot}(x, ...)
 
-\method{as_ggplot}{kggplot}(x, ...)
+\method{as_ggplot}{kggplot}(x, ..., shared = NULL)
 
 \method{as_ggplot}{kgg_grid}(x, ...)
 }
 \arguments{
-\item{x}{A \code{kggplot} (or a \code{ggplot}, returned unchanged).}
+\item{x}{A \code{kggplot}, a \code{kgg_grid} or a \code{ggplot} (returned unchanged).}
 
 \item{...}{Unused.}
+
+\item{shared}{Colour and fill levels or limits imposed on a \code{kggplot}.
+Used by \code{\link[=kgg_grid]{kgg_grid()}} to share scales across plots; leave it \code{NULL}.}
 }
 \value{
 A \code{ggplot} object.
