@@ -140,3 +140,13 @@ test_that("convexhull needs ggConvexHull", {
     expect_error(as_ggplot(p), "ggConvexHull")
   }
 })
+
+test_that("the tile type draws a heatmap", {
+  d <- expand.grid(a = c("u", "v", "w"), b = c("x", "y"))
+  d$n <- seq_len(nrow(d))
+  p <- kggplot(d, "a", "b", fill = "n", type = "tile")
+  r <- render(p)
+  expect_s3_class(r$plot$layers[[1]]$geom, "GeomTile")
+  expect_equal(nrow(r$built$data[[1]]), nrow(d))
+  expect_true("tile" %in% kgg_types())
+})

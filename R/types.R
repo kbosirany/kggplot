@@ -131,6 +131,10 @@ register_builtin_types <- function() {
     params = list(method = "lm", formula = y ~ x, se = FALSE)
   )
   reg("text", ggplot2::geom_text)
+  reg(
+    "tile", ggplot2::geom_tile, series = "fill",
+    params = list(colour = "white", linewidth = 0.5)
+  )
   reg("bar", ggplot2::geom_col, series = "fill")
   reg("col", ggplot2::geom_col, series = "fill")
   reg(
