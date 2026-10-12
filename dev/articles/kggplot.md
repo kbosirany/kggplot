@@ -101,11 +101,11 @@ lists the available types.
 
 kgg_types()
 #>  [1] "point"      "jitter"     "line"       "path"       "step"      
-#>  [6] "area"       "smooth"     "text"       "bar"        "col"       
-#> [11] "bar_dodge"  "count"      "histogram"  "density"    "ecdf"      
-#> [16] "cumFreq"    "boxplot"    "violin"     "ribbon"     "pointrange"
-#> [21] "errorbar"   "hline"      "vline"      "blank"      "sf"        
-#> [26] "convexhull"
+#>  [6] "area"       "smooth"     "text"       "tile"       "bar"       
+#> [11] "col"        "bar_dodge"  "count"      "histogram"  "density"   
+#> [16] "ecdf"       "cumFreq"    "boxplot"    "violin"     "ribbon"    
+#> [21] "pointrange" "errorbar"   "hline"      "vline"      "blank"     
+#> [26] "sf"         "convexhull"
 ```
 
 ``` r

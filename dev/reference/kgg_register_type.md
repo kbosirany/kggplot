@@ -96,11 +96,11 @@ Built-in types: `point`, `jitter`, `line`, `path`, `step`, `area`,
 ``` r
 kgg_types()
 #>  [1] "point"      "jitter"     "line"       "path"       "step"      
-#>  [6] "area"       "smooth"     "text"       "bar"        "col"       
-#> [11] "bar_dodge"  "count"      "histogram"  "density"    "ecdf"      
-#> [16] "cumFreq"    "boxplot"    "violin"     "ribbon"     "pointrange"
-#> [21] "errorbar"   "hline"      "vline"      "blank"      "sf"        
-#> [26] "convexhull"
+#>  [6] "area"       "smooth"     "text"       "tile"       "bar"       
+#> [11] "col"        "bar_dodge"  "count"      "histogram"  "density"   
+#> [16] "ecdf"       "cumFreq"    "boxplot"    "violin"     "ribbon"    
+#> [21] "pointrange" "errorbar"   "hline"      "vline"      "blank"     
+#> [26] "sf"         "convexhull"
 kgg_register_type("hollow", ggplot2::geom_point, params = list(shape = 1))
 kggplot(iris, "Sepal.Length", "Sepal.Width", type = "hollow")
 

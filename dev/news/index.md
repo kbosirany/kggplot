@@ -1,5 +1,11 @@
 # Changelog
 
+## kggplot (development version)
+
+- New plot type `tile` (`geom_tile()`): heatmaps, from a `fill` column
+  and two numeric or categorical axes (use `type = "text"` with `label`
+  to write the values on the tiles).
+
 ## kggplot 0.3.1
 
 This version improves
